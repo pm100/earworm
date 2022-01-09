@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="libman.json" />
     <Content Remove="Pages\Counter.razor" />
     <Content Remove="Pages\FetchData.razor" />
     <Content Remove="Shared\Modal.razor" />
