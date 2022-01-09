@@ -1,0 +1,41 @@
+﻿@if (showDialog_)  
+{  
+  
+<div class="modal fade show d-block" id="exampleModal" tabindex="-1" role="dialog">  
+    <div class="modal-dialog" role="document">  
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h5 class="modal-title" id="titleLabel">Listening...</h5>  
+                <button type="button" class="close" @onclick="@Close" data-dismiss="modal" aria-label="Close">  
+                    <span aria-hidden="true">×</span>  
+                </button>  
+            </div>  
+            <div class="modal-body">  
+                <p>I heard: @notes_</p>
+            </div>  
+        </div>  
+    </div>  
+</div>  
+} 
+
+@code{
+    bool showDialog_ = false;
+    string notes_ = "C3 D4";
+    public void Close()
+    {
+        showDialog_ = false;
+    }
+    public void Show()
+    {
+        showDialog_ = true;
+        StateHasChanged();
+    }
+    public void AddNote(string note)
+    {
+        notes_ = notes_ + " " + note;
+    }
+    public void ClearNotes()
+    {
+        notes_ = "";
+    }
+}

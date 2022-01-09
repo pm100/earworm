@@ -1,0 +1,98 @@
+﻿@using EarWorm.Code
+<HxDropdown>
+	<HxDropdownToggleButton Color="ThemeColor.Primary">@ButtonText</HxDropdownToggleButton>
+	<HxDropdownMenu>
+		@for (int i = 0; i < Items.Count; i++)
+		{
+			int j = i;
+			<HxDropdownItem OnClick="()=>Click(j)">@(Items[j])</HxDropdownItem>
+		}
+	</HxDropdownMenu>
+</HxDropdown>
+@code {
+	[Parameter]
+	public IList<string> Items { get; set; }
+
+	[Parameter]
+	public string ButtonText { get
+		{
+			if(_currentSelection != -1)
+			{
+				return Items[_currentSelection];
+			}
+			else
+			{
+				return _configuredText;
+			}
+		}
+
+		set
+		{
+			_configuredText = value;
+			
+		} }
+
+	[Parameter]
+	public int Selected
+	{
+		get
+		{
+			return _currentSelection;
+		}
+		set
+		{
+			_configuredSelection = value;
+		if(_currentSelection == -1)
+			_currentSelection = value;
+		}
+	}
+
+	[Parameter]
+	public EventCallback<int> OnSelectionChange { get; set; }
+	int _currentSelection = -1;
+	int _configuredSelection = -1;
+	
+	string _configuredText;
+	async void Click(int i)
+	{
+		Util.Log($"click = {i} sel ={Selected}");
+		ButtonText = Items[i];
+		if(i != _currentSelection)
+		{
+			await OnSelectionChange.InvokeAsync(i);
+		}
+		_currentSelection = i;
+		//StateHasChanged();
+
+	}
+	protected override void OnInitialized()
+	{
+		Util.Log("init");
+		if (Selected != -1)
+		{
+			//ButtonText = Items[Selected];
+		}
+	}
+	protected override void OnParametersSet()
+	{		
+		Util.Log("init2");
+
+		if (Selected != -1)
+		{
+			//ButtonText = Items[Selected];
+		}
+	}
+	public  override async Task SetParametersAsync(ParameterView par)
+	{
+		Util.Log("params");
+		var oldSel = Selected;
+
+		await base.SetParametersAsync(par);
+
+
+	}
+
+	public DropDown(){
+		Util.Log("constuct");
+	}
+}

@@ -1,0 +1,12 @@
+﻿@typeparam TItem
+
+<table class = "table table-sm">
+    @for (int i = 0; i < Items.Count; i++) {
+        
+    }
+</table>
+
+@code {
+    [Parameter]
+    public IList<TItem> Items { get; set; }
+}

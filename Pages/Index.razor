@@ -1,0 +1,33 @@
+﻿@page "/"
+@using EarWorm.Code
+@using System.Globalization
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<button  @onclick=Show>Modal</button>
+
+<Listener @ref=m1/>
+
+<p>I will display &#9986;</p>
+<p>I will display &#x2702;</p>
+
+@code {
+	private List<CultureInfo> localCultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+
+	private Task<GridDataProviderResult<CultureInfo>> ClientSideProcessingDataProvider(GridDataProviderRequest<CultureInfo> request)
+	{
+		return Task.FromResult(request.ApplyTo(localCultureInfos));
+	}
+}
+@code{
+    Listener m1;
+    private async void Show()
+    {
+        var notes = new int[] { 46, 47, 48 };
+        Listener.ListenResult res = await m1.Show(Listener.Mode.Test, notes);
+        Util.Log(string.Format("res={0}", res));
+    }
+}

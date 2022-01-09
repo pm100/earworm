@@ -1,0 +1,29 @@
+﻿@page "/test"
+@using EarWorm.Code;
+<Listener @ref=_listener/>
+<p>@SetDescription</p>
+<HxButton Text="@StartButtonText"  OnClick="StartClick" Color="ThemeColor.Primary"/>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Result</th>
+      <th scope="col">Tries</th>
+      <th scope="col">Score</th>
+    </tr>
+  </thead>
+  <tbody>
+      @for(int i = 0; i < Results.Count; i++)
+      {
+            var j = i;
+            var it = Results[i];
+            <tr>
+      <th scope="row">@j</th>
+      <td>@it.Success</td>
+      <td>@it.Tries</td>
+      <td></td>
+    </tr>
+    }
+  </tbody>
+</table>

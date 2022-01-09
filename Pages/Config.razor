@@ -1,0 +1,45 @@
+﻿@page "/config"
+@inject IJSRuntime JS
+@using EarWorm.Code;
+<PageTitle>Configure</PageTitle>
+<DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
+OnSelectionChange=@InstrumentChanged/>
+
+
+@code {
+    Dictionary<string, Instrument> _instrumentTable;
+    List<string> _instrumentKeys;
+    List<string> _instrumentNames;
+    public Config()
+    {
+        _instrumentTable = Application.MusicEngine.GetInstrumentTable();
+        _instrumentKeys = _instrumentTable.Keys.ToList();
+        _instrumentNames = _instrumentTable.Values.Select(ins=>ins.Name).ToList();
+    }
+    public List<string> Items { get
+        {
+            return _instrumentNames;
+        } }
+    public int Selected
+    {
+        get
+        {
+            var sel = Application.MusicEngine.GetCurrentInstrument();
+            return _instrumentKeys.FindIndex(x => x == sel.key);
+        }
+    }
+    private void Play()
+    {
+        var notes = new string[]{ "c4", "e4", "g5"};
+        JS.InvokeVoidAsync("playChord",notes,0);
+    }
+
+    private void InstrumentChanged(int value)
+    {
+        Util.Log($"inst = {value}");
+        var k = _instrumentKeys[value];
+        Application.MusicEngine.UpdateInstrument( k);
+    }
+}
+
+
