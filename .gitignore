@@ -1,0 +1,11 @@
+﻿# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+.vs/
+bin/
+node_modules/
+obj/
