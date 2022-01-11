@@ -1,5 +1,5 @@
 ﻿
-<HxModal @ref="myModal" Title="Listening" OnClosed="Closed">
+<HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown">
 	<BodyTemplate>
 		<div>
 			I heard: @_notes
@@ -28,21 +28,24 @@
 		Matched,
 		Failed,
 		Timeout,
-		Abandoned
+		Abandoned,
+		RetryLimit
 	}
 	Timer _timer;
 	int Time;
 	int Max;
-	HxModal myModal;
+	HxModal _modal;
 
 	bool _listening;
-	ListenResult _result = ListenResult.Abandoned;
+	MusicEngine.TestResult _result;
 	Mode _mode;
-	TaskCompletionSource<ListenResult> _tcs;
+	TaskCompletionSource<MusicEngine.TestResult> _tcs;
 	static Listener s_listenerInstance;
 	private string _notes;
 	IList<int> _noteList;
-	int m_noteIdx;
+	int _noteIdx;
+	DateTime _startTime;
+
 
 	void StartTimer(int max)
 	{
@@ -69,14 +72,15 @@
 		Util.Log("construct");
 		s_listenerInstance = this;
 	}
-	public Task<ListenResult>  Show(Mode mode, IList<int> notes)
+	public  Task<MusicEngine.TestResult>  Show(Mode mode, IList<int> notes)
 	{
-		_tcs = new TaskCompletionSource<ListenResult>();
+		_tcs = new TaskCompletionSource<MusicEngine.TestResult>();
 		Init(mode);
 		_noteList = notes;
-		StartTimer(20);
-		var t = myModal.ShowAsync();
+		//	StartTimer(20);
+		 _modal.ShowAsync();
 		StartJSListener();
+		_startTime = DateTime.Now;
 		return _tcs.Task;
 	}
 
@@ -85,11 +89,14 @@
 		Util.Log("init");
 		_notes = "";
 		_mode = mode;
-		m_noteIdx = 0;
-		_result = ListenResult.Abandoned;
+		_noteIdx = 0;
+		_result = new MusicEngine.TestResult {
+				LR = ListenResult.Abandoned
+			};
 	}
 	private void Note(int n)
 	{
+		Util.Log($"note = {n}, listen = {_listening}");
 		// to deal with any last note notification left over
 		if (!_listening)
 			return;
@@ -98,16 +105,17 @@
 		var noteStr = me.GetNoteName(n);
 
 		// did they play the correct note?
-		if (_noteList[m_noteIdx] == n) {
+		if (_noteList[_noteIdx] == n) {
 			// yes, move to the next one
-			m_noteIdx++;
-			if (m_noteIdx == _noteList.Count) {
+			_noteIdx++;
+			if (_noteIdx == _noteList.Count) {
 				// all matched - woo hoo
 				Stop(ListenResult.Matched);
 			}
 		}
 		else {
 			// wrong note, we are out of here
+			_result.FailedNote = _noteIdx;
 			Stop(ListenResult.Failed);
 		}	
 		_notes += String.Format("{0} ", noteStr);
@@ -116,7 +124,7 @@
 	private void StartJSListener()
 	{
 		JS.InvokeVoidAsync("pitchStart","earworm", "NoteHeard");
-		_listening = true;
+		//_listening = true;
 	}
 	private void StopJSListener()
 	{
@@ -130,30 +138,43 @@
 	{
 		s_listenerInstance.Note(note);
 	}
-	private  void Stop(ListenResult result)
+
+	private  async void Stop(ListenResult result)
 	{
-		_timer.Dispose();
+		if(_timer != null) {
+			_timer.Dispose();
+			_timer = null;			
+		}
 		StopJSListener();
-		_result = result;
-		myModal.HideAsync();
+		_result.LR = result;
+		Util.Log("hide1");
+		await _modal.HideAsync();
 		Util.Log(string.Format("stop result={0}", result));
-		//_tcs.SetResult(result);
-		//_tcs = null;
 	}
+
 	private void Closed(){
+		Util.Log($"closed {_listening}");
 		if (_listening) {
 			_timer.Dispose();
+			_timer = null;
 			StopJSListener();
 		}
 		Util.Log(string.Format("set task={0}", _result));
+		_result.Time = DateTime.Now - _startTime;
 		_tcs.SetResult(_result);
 		_tcs = null;
-
 	}
+
 	private void HandleClose()
 	{
+		Util.Log($"hc {_listening}");
 		Stop(ListenResult.Abandoned);
 		StateHasChanged();
+	}
+	private void Shown() {
+		Util.Log($"shown {_listening}");
+		_listening = true;
+		
 	}
 	public void Dispose()
 	{

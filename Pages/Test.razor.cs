@@ -55,15 +55,15 @@ namespace EarWorm.Pages {
 
                     var result = await _listener.Show(Listener.Mode.Test, test.Notes);
                     StateHasChanged();
-                    switch (result) {
+                    switch (result.LR) {
                         case Listener.ListenResult.Matched:
                             // woo hoo 
-                            _results.Add(new MusicEngine.TestResult { Number = i, Success = true, Tries = tries + 1 });
+                            _results.Add(result);
                             goto end_retry;
 
                         case Listener.ListenResult.Abandoned:
                             // nope, i dont like this test
-                            _results.Add(new MusicEngine.TestResult { Number = i, Success = false, Tries = tries + 1 });
+                            _results.Add(result);
                             goto end_retry;
                     }
                     // otherwise try again (result = failed)
@@ -71,7 +71,7 @@ namespace EarWorm.Pages {
                 }
                 // dropped out after retry exceeded, we failed
                 if(tries == test.Numtries) {
-                    _results.Add(new MusicEngine.TestResult { Number = i, Success = false, Tries = tries});
+                    _results.Add(new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = tries});
                 }
                 end_retry:
                 StateHasChanged();

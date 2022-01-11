@@ -9,7 +9,7 @@ Welcome to your new app.
 
 <button  @onclick=Show>Modal</button>
 
-<Listener @ref=m1/>
+<Listener @ref=_listenDialog/>
 
 <p>I will display &#9986;</p>
 <p>I will display &#x2702;</p>
@@ -23,11 +23,11 @@ Welcome to your new app.
 	}
 }
 @code{
-    Listener m1;
+    Listener _listenDialog;
     private async void Show()
     {
         var notes = new int[] { 46, 47, 48 };
-        Listener.ListenResult res = await m1.Show(Listener.Mode.Test, notes);
-        Util.Log(string.Format("res={0}", res));
+      //  MusicEngine.TestResult res = await _listenDialog.Show(Listener.Mode.Test, notes);
+       // Util.Log(string.Format("res={0}", res));
     }
 }

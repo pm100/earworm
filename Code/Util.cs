@@ -12,7 +12,8 @@ namespace EarWorm.Code
 		}
         public async static void Log(string s)
         {
-            await s_JS.InvokeVoidAsync("console.log", s);
+            var thread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            await s_JS.InvokeVoidAsync("console.log", $"[{thread}] {s}");
 
         }
 

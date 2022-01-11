@@ -18,9 +18,25 @@
       {
             var j = i;
             var it = Results[i];
+            string resultStr = "";
+            switch (it.LR){
+                case Listener.ListenResult.Matched:
+                    resultStr = "\u2714";
+                    break;
+                    case Listener.ListenResult.Failed:
+                    resultStr = "\u2718";
+                    break;
+                    case Listener.ListenResult.Abandoned:
+                    resultStr = "\u2700";
+                    break;
+                    case Listener.ListenResult.Timeout:
+                    resultStr = "\u231a";
+                    break;
+
+            }
             <tr>
       <th scope="row">@j</th>
-      <td>@it.Success</td>
+      <td>@resultStr</td>
       <td>@it.Tries</td>
       <td></td>
     </tr>

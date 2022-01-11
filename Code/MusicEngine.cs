@@ -14,15 +14,18 @@ namespace EarWorm.Code {
             public int Difficulty;
             public IList<int> Notes;
             public RootMode RootMode;
-            };
+            public int SeqNumber;
+        };
         public class TestSet {
             public string Description;
             public int TestCount;
         }
         public class TestResult {
             public int Number;
-            public bool Success;
+            public EarWorm.Shared.Listener.ListenResult LR;
             public int Tries;
+            public int FailedNote;
+            public TimeSpan Time;
         }
 
         static Dictionary<string, Instrument> _instruments = new Dictionary<string, Instrument>()
@@ -30,11 +33,11 @@ namespace EarWorm.Code {
             {"P",   new Instrument("P", "Piano", 0)},
             {"G", new Instrument("G", "Guitar", 12) }
         };
-      
+
         static String[] noteStrings = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
         TestSet _currentSet;
         SetGenerator _generator;
-        int _currentTest;
+        TestDefinition _currentTest;
         public String CurrentSetName { get { return _currentSet?.Description; } }
 
         public void Init(SetGenerator.SetDef def) {
@@ -67,15 +70,23 @@ namespace EarWorm.Code {
             return new TestSet { Description = "Test", TestCount = 10 };
         }
         public IEnumerable<TestDefinition> GetNextTest() {
-            foreach(var td in _generator.GetNextTest()){
-                yield return new TestDefinition {
+            var testIdx = 0;
+            foreach (var td in _generator.GetNextTest()) {
+                _currentTest = new TestDefinition {
                     Notes = td.Notes,
                     RootMode = RootMode.RootIncluded,
                     Numtries = 5,
-                    Difficulty = 1
+                    Difficulty = 1,
+                    SeqNumber = testIdx
                 };
+                testIdx++;
+                yield return _currentTest;
 
             }
+        }
+        public void ReportTestResult(TestResult result) {
+
+
         }
     }
 }
