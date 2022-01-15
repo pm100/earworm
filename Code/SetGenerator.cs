@@ -1,13 +1,23 @@
-﻿namespace EarWorm.Code {
+﻿using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
+namespace EarWorm.Code {
     public class SetGenerator {
-
+        [Inject]
+        public IJSRuntime JJS { get; set; }
         static Dictionary<Scale, List<int>> S_scales = new Dictionary<Scale, List<int>>() {
             {Scale.Ionian, new List<int>() {0,2,4,5,7,9,11}},
             {Scale.Dorian, new List<int>() {0,2,3,5,7,9,10}},
-            {Scale.Phrigian, new List<int>() {0,1,3,5,7,9,10}},
+            {Scale.Phrygian, new List<int>() {0,1,3,5,7,9,10}},
              {Scale.Lydian, new List<int>() {0,2,4,6,7,9,11}},
-             {Scale.Mixolydian, new List<int>() {0,2,4,5,7,9,10}}
-
+             {Scale.Aeolian, new List<int>() {0,2,3,5,7,8,10}},
+             {Scale.Locrian, new List<int>() {0,1,2,5,6,9,10}},
+             {Scale.Mixolydian, new List<int>() {0,2,4,5,7,9,10}},
+             {Scale.WholeTone, new List<int>() {0,2,4,6,8,10}},
+             {Scale.MelodicMinor, new List<int>() {0,2,3,5,7,9,11}},
+             {Scale.HarmonicMinor, new List<int>() {0,2,3,5,7,8,11}},
+             {Scale.DiminishedWH, new List<int>() {0,2,3,5,6,8,9,11}},
+             {Scale.DiminishedHW, new List<int>() {0,1,3,4,6,7,9,10}},
+             {Scale.Altered, new List<int>() {0,1,3,4,6,8,10}},
         };
         public enum Style {
             ScaleRandom,
@@ -17,13 +27,13 @@
         public enum Scale {
             Ionian,
             Dorian,
-            Phrigian,
+            Phrygian,
             Lydian,
             Mixolydian,
             Aeolian,
             Locrian,
             Altered,
-            DiminishWH,
+            DiminishedWH,
             DiminishedHW,
             WholeTone,
             MelodicMinor,
@@ -51,14 +61,21 @@
         }
 
         public class SetDef {
-            public Style Style;
-            public Key Key;
-            public Scale Scale;
-            public int TestCount;
-            public int NoteCount;
-            public bool FirstNoteRoot;
-            public int RangeStart;
-            public int RangeEnd;
+            public Style Style { get; set; }
+            public Key Key { get; set; }
+            public Scale Scale { get; set; }
+            public int TestCount { get; set; }
+            public int NoteCount { get; set; }
+            public bool FirstNoteRoot { get; set; }
+            public int RangeStart { get; set; }
+            public int RangeEnd { get; set; }
+            public string Description { get {
+                    var key = EarWorm.Pages.TestSetup.s_keyTable.Find(x => x.Item1 == Key).Item2;
+                    var scale = EarWorm.Pages.TestSetup.s_scaleTable.Find(x => x.Item1 == Scale).Item2;
+                    return $"Basic Scale, {key} {scale} ";
+                }
+             }
+            public int Retries { get; set; }
         }
 
         SetDef _setdef;
@@ -73,6 +90,9 @@
                             var notes = ScaleNotes();
                             var td = new MusicEngine.TestDefinition {
                                 Notes = notes,
+                                Numtries = _setdef.TestCount,
+                                TimeOut = notes.Count * 2
+                               
                             };
                             yield return td;
                         }

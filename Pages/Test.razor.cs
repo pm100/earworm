@@ -1,34 +1,22 @@
 ﻿using EarWorm.Shared;
 using EarWorm.Code;
-using Havit.Blazor.Components.Web.Bootstrap;
 using Microsoft.JSInterop;
 namespace EarWorm.Pages {
     public partial class Test {
 
-        String SetDescription { get { return _set.Description ?? string.Empty; } }
+        String SetDescription { get { return _musicEngine.CurrentSet.Description ; } }
 
         bool _running = false;
         Listener _listener;
-        MusicEngine.TestSet _set;
+        
         MusicEngine _musicEngine = Application.MusicEngine;
 
         List<MusicEngine.TestResult> _results;
         public Test() {
-            _set = _musicEngine.GetTestSet();
+          
             _results = new List<MusicEngine.TestResult>();
-            var setDef = new SetGenerator.SetDef {
-                FirstNoteRoot = true,
-                Key = SetGenerator.Key.C,
-                NoteCount = 3,
-                RangeStart = 60,
-                RangeEnd = 72,
-                Scale = SetGenerator.Scale.Ionian,
-                Style = SetGenerator.Style.ScaleRandom,
-                TestCount = 10
 
-
-            };
-            _musicEngine.Init(setDef);  
+            _musicEngine.Init(Application.Settings.CurrentSet);  
         }
         private string StartButtonText {
             get {
@@ -45,15 +33,15 @@ namespace EarWorm.Pages {
 
             foreach(var test in _musicEngine.GetNextTest()) { 
                 if (!_running) break;
-                var tries = 0;
+                test.UsedTries = 0;
                 var i = 0;
-                for (; tries < test.Numtries; tries++) {
+                for (; test.UsedTries < test.Numtries; test.UsedTries++) {
                     i++;
                     await Task.Delay(1000);
                     PlayNotes(test.Notes);
                     await Task.Delay(5000);
 
-                    var result = await _listener.Show(Listener.Mode.Test, test.Notes);
+                    var result = await _listener.Show(Listener.Mode.Test, test);
                     StateHasChanged();
                     switch (result.LR) {
                         case Listener.ListenResult.Matched:
@@ -70,8 +58,8 @@ namespace EarWorm.Pages {
                    
                 }
                 // dropped out after retry exceeded, we failed
-                if(tries == test.Numtries) {
-                    _results.Add(new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = tries});
+                if(test.UsedTries == test.Numtries) {
+                    _results.Add(new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = test.UsedTries});
                 }
                 end_retry:
                 StateHasChanged();

@@ -1,17 +1,21 @@
 ﻿
-<HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown">
+<HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown" 
+Centered="true"
+ShowCloseButton="false">
 	<BodyTemplate>
+
+		<div>Try @(_testDef.UsedTries+1) / @_testDef.Numtries</div>
 		<div>
 			I heard: @_notes
 		</div>
-		<HxBadge Color="ThemeColor.Success">Yup</HxBadge>
+		
 		<HxProgress>
     <HxProgressBar Label="" MaxValue=@Max Value=@Time />
 </HxProgress>
 
 	</BodyTemplate>
 	<FooterTemplate>
-		<HxButton Text="Close" OnClick="HandleClose" Color="ThemeColor.Primary" />
+		<HxButton Text="Skip" OnClick="HandleClose" Color="ThemeColor.Primary" />
 	</FooterTemplate>
 </HxModal>
 
@@ -45,7 +49,7 @@
 	IList<int> _noteList;
 	int _noteIdx;
 	DateTime _startTime;
-
+	MusicEngine.TestDefinition _testDef;
 
 	void StartTimer(int max)
 	{
@@ -72,16 +76,17 @@
 		Util.Log("construct");
 		s_listenerInstance = this;
 	}
-	public  Task<MusicEngine.TestResult>  Show(Mode mode, IList<int> notes)
+	public async Task<MusicEngine.TestResult>  Show(Mode mode,MusicEngine.TestDefinition testDef)
 	{
 		_tcs = new TaskCompletionSource<MusicEngine.TestResult>();
+		_testDef = testDef;
 		Init(mode);
-		_noteList = notes;
-		//	StartTimer(20);
-		 _modal.ShowAsync();
+		_noteList = _testDef.Notes;
+		StartTimer(testDef.TimeOut);
+		await _modal.ShowAsync();
 		StartJSListener();
 		_startTime = DateTime.Now;
-		return _tcs.Task;
+		return await _tcs.Task;
 	}
 
 	private void Init(Mode mode)

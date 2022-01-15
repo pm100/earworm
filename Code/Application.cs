@@ -15,11 +15,20 @@
         {
             return s_app;
         }
-        public static void Boot()
+        public static async Task Boot()
         {
             s_app = new Application();
             s_app.m_settings = new Settings();
+           
             s_app.m_musicEngine = new MusicEngine();
+            await s_app.m_settings.Boot();
+            return;// Task.CompletedTask;
+        }
+        public static event EventHandler OnNavigate;
+        public static void OnMenuNavigate() {
+            if (OnNavigate != null)
+                OnNavigate.Invoke(s_app, null);
+
         }
     }
 }
