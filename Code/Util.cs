@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Components;
 namespace EarWorm.Code
 {
-    
-    public static class Util
+   // public interface IUtil {
+
+
+   // }
+    public  class Util// : IUtil
     {
         static IJSRuntime s_JS;
         public static void Init(IJSRuntime js)
@@ -28,5 +31,14 @@ namespace EarWorm.Code
 		}
 
         public static IJSRuntime JS { get { return s_JS; } }
+
+        public static void NoSleep(bool enable) {
+            if (enable) {
+                s_JS.InvokeVoidAsync("window.noSleep");
+            }
+            else {
+                s_JS.InvokeVoidAsync("windows.allowSleep");
+            }
+        }
     }
 }

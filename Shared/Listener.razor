@@ -8,7 +8,8 @@ ShowCloseButton="false">
 		<div>
 			I heard: @_notes
 		</div>
-		
+		<div id="vf">xxxxx</div>
+
 		<HxProgress>
     <HxProgressBar Label="" MaxValue=@Max Value=@Time />
 </HxProgress>
@@ -85,6 +86,7 @@ ShowCloseButton="false">
 		StartTimer(testDef.TimeOut);
 		await _modal.ShowAsync();
 		StartJSListener();
+
 		_startTime = DateTime.Now;
 		return await _tcs.Task;
 	}
@@ -93,12 +95,14 @@ ShowCloseButton="false">
 	{
 		Util.Log("init");
 		_notes = "";
+		_notesHeard.Clear();
 		_mode = mode;
 		_noteIdx = 0;
 		_result = new MusicEngine.TestResult {
 				LR = ListenResult.Abandoned
 			};
 	}
+	List<string> _notesHeard = new List<string>();
 	private void Note(int n)
 	{
 		Util.Log($"note = {n}, listen = {_listening}");
@@ -122,7 +126,10 @@ ShowCloseButton="false">
 			// wrong note, we are out of here
 			_result.FailedNote = _noteIdx;
 			Stop(ListenResult.Failed);
-		}	
+		}
+
+		_notesHeard.Add($"{noteStr[0..^1]}/{noteStr[^1]}");
+		Util.JS.InvokeVoidAsync("window.drawStaff","vf", _notesHeard);
 		_notes += String.Format("{0} ", noteStr);
 		StateHasChanged();
 	}
@@ -176,8 +183,10 @@ ShowCloseButton="false">
 		Stop(ListenResult.Abandoned);
 		StateHasChanged();
 	}
+	string[] _noNotes = new string[0];
 	private void Shown() {
 		Util.Log($"shown {_listening}");
+		Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _noNotes);
 		_listening = true;
 		
 	}

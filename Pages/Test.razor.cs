@@ -30,38 +30,32 @@ namespace EarWorm.Pages {
             
         }
         private async Task StartTestSet() {
-
+            Util.NoSleep(true);
             foreach(var test in _musicEngine.GetNextTest()) { 
                 if (!_running) break;
                 test.UsedTries = 0;
                 var i = 0;
+                MusicEngine.TestResult result = null;
                 for (; test.UsedTries < test.Numtries; test.UsedTries++) {
                     i++;
                     await Task.Delay(1000);
                     PlayNotes(test.Notes);
-                    await Task.Delay(5000);
+                    await Task.Delay(test.Notes.Count * 1000);
 
-                    var result = await _listener.Show(Listener.Mode.Test, test);
+                    result = await _listener.Show(Listener.Mode.Test, test);
                     StateHasChanged();
-                    switch (result.LR) {
-                        case Listener.ListenResult.Matched:
-                            // woo hoo 
-                            _results.Add(result);
-                            goto end_retry;
-
-                        case Listener.ListenResult.Abandoned:
-                            // nope, i dont like this test
-                            _results.Add(result);
-                            goto end_retry;
+                    if(result.LR == Listener.ListenResult.Matched 
+                        || result.LR == Listener.ListenResult.Abandoned) { 
+                            break;
                     }
                     // otherwise try again (result = failed)
                    
                 }
                 // dropped out after retry exceeded, we failed
                 if(test.UsedTries == test.Numtries) {
-                    _results.Add(new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = test.UsedTries});
+                    result = new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = test.UsedTries };
                 }
-                end_retry:
+                _musicEngine.ReportTestResult(result);
                 StateHasChanged();
 
             }
