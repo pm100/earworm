@@ -1,9 +1,9 @@
 import * as  Tone from 'tone';
 import NoSleep from 'nosleep.js';
 import Vex from 'vexflow';
+window.Vex = Vex;
 
-
-window.drawStaff = (divName, noteList) => {
+window.drawStaffxx = (divName, noteList, noteColors) => {
     const VF = Vex.Flow;
     // Create an SVG renderer and attach it to the DIV element named "vf".
     const div = document.getElementById(divName);
@@ -25,24 +25,11 @@ window.drawStaff = (divName, noteList) => {
     stave.setContext(context).draw();
     if (noteList.length == 0)
         return;
-    // Create the notes
-    var notes = [
-        // A quarter-note C.
-        //new VF.StaveNote({ keys: ["c/4"], duration: "q" }),
-
-        // A quarter-note D.
-        new VF.StaveNote({ keys: ["d/4"], duration: "q" }),
-
-        // A quarter-note rest. Note that the key (b/4) specifies the vertical
-        // position of the rest.
-        new VF.StaveNote({ keys: ["b/4"], duration: "qr" }),
-
-        // A C-Major chord.
-        new VF.StaveNote({ keys: ["c/4", "e/4", "g/4"], duration: "q" })
-    ];
+    var colorIdx = 0;
     var notes = noteList.map(n => {
         var nt = new VF.StaveNote({ clef: "treble", keys: [n], duration: "q" });
-        console.log(n);
+        console.log("color " + noteColors[colorIdx]);
+        nt.setStyle({ fillStyle: noteColors[colorIdx++] });
         return nt;
     });
     // Create a voice in 4/4 and add above notes

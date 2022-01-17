@@ -27,6 +27,15 @@
 
     protected override async Task OnInitializedAsync() {
         // hand off the JS runtime to util library
+
+            string[] lines =
+        {
+            "First line", "Second line", "Third line" 
+        };
+
+        await File.WriteAllLinesAsync("WriteLines.txt", lines);
+
+         string[] lines2 = System.IO.File.ReadAllLines(@"WriteLines.txt");
         EarWorm.Code.Util.Init(JS);
         await EarWorm.Code.Application.Boot();
         BootComplete = true;

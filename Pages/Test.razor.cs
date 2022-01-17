@@ -38,7 +38,7 @@ namespace EarWorm.Pages {
                 MusicEngine.TestResult result = null;
                 for (; test.UsedTries < test.Numtries; test.UsedTries++) {
                     i++;
-                    await Task.Delay(1000);
+                   // await Task.Delay(1000);
                     PlayNotes(test.Notes);
                     await Task.Delay(test.Notes.Count * 1000);
 
@@ -59,7 +59,7 @@ namespace EarWorm.Pages {
                 StateHasChanged();
 
             }
-            await Task.Delay(1000);
+           // await Task.Delay(1000);
         }
 
         private IList<MusicEngine.TestResult> Results {
