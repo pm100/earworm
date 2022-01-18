@@ -1,5 +1,6 @@
 ﻿@page "/config"
 @inject IJSRuntime JS
+@implements IDisposable
 @using EarWorm.Code;
 <PageTitle>Configure</PageTitle>
 <DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
@@ -12,7 +13,7 @@ OnSelectionChange=@InstrumentChanged/>
     List<string> _instrumentNames;
     public Config()
     {
-        _instrumentTable = Application.MusicEngine.GetInstrumentTable();
+        _instrumentTable = Lookups.Instruments;
         _instrumentKeys = _instrumentTable.Keys.ToList();
         _instrumentNames = _instrumentTable.Values.Select(ins=>ins.Name).ToList();
     }
@@ -39,6 +40,9 @@ OnSelectionChange=@InstrumentChanged/>
         Util.Log($"inst = {value}");
         var k = _instrumentKeys[value];
         Application.MusicEngine.UpdateInstrument( k);
+    }
+    public void Dispose() {
+        Util.Log("displose config");
     }
 }
 

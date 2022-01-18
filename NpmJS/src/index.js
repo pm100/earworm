@@ -47,12 +47,14 @@ window.drawStaffxx = (divName, noteList, noteColors) => {
 
 window.noSleep = () => {
     window.sleeper = new NoSleep();
+   
+    sleeper.enable();
     console.log("nosleep on");
-    sleep.emable();
 
 }
 window.allowSleep = () => {
     sleeper.disable();
+    console.log("nosleep off");
 }
         window.convertArray = () => {
         Tone.start();

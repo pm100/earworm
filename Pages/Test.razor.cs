@@ -4,20 +4,15 @@ using Microsoft.JSInterop;
 namespace EarWorm.Pages {
     public partial class Test {
 
-        String SetDescription { get { return _musicEngine.CurrentSet.Description ; } }
 
         bool _running = false;
         Listener _listener;
-        
         MusicEngine _musicEngine = Application.MusicEngine;
-
-        List<MusicEngine.TestResult> _results;
+       
         public Test() {
-          
-            _results = new List<MusicEngine.TestResult>();
-
             _musicEngine.Init(Application.Settings.CurrentSet);  
         }
+        String SetDescription => _musicEngine.CurrentSet.Description;
         private string StartButtonText {
             get {
                 return _running ? "Stop" : "Start";
@@ -35,7 +30,7 @@ namespace EarWorm.Pages {
                 if (!_running) break;
                 test.UsedTries = 0;
                 var i = 0;
-                MusicEngine.TestResult result = null;
+                TestResult result = null;
                 for (; test.UsedTries < test.Numtries; test.UsedTries++) {
                     i++;
                    // await Task.Delay(1000);
@@ -44,8 +39,8 @@ namespace EarWorm.Pages {
 
                     result = await _listener.Show(Listener.Mode.Test, test);
                     StateHasChanged();
-                    if(result.LR == Listener.ListenResult.Matched 
-                        || result.LR == Listener.ListenResult.Abandoned) { 
+                    if(result.LR == Lookups.ListenResult.Matched 
+                        || result.LR == Lookups.ListenResult.Abandoned) { 
                             break;
                     }
                     // otherwise try again (result = failed)
@@ -53,7 +48,7 @@ namespace EarWorm.Pages {
                 }
                 // dropped out after retry exceeded, we failed
                 if(test.UsedTries == test.Numtries) {
-                    result = new MusicEngine.TestResult { Number = i, LR = Listener.ListenResult.Failed, Tries = test.UsedTries };
+                    result = new TestResult { Number = i, LR = Lookups.ListenResult.Failed, Tries = test.UsedTries };
                 }
                 _musicEngine.ReportTestResult(result);
                 StateHasChanged();
@@ -62,9 +57,9 @@ namespace EarWorm.Pages {
            // await Task.Delay(1000);
         }
 
-        private IList<MusicEngine.TestResult> Results {
+        private IList<TestResult> Results {
             get {
-                return _results;
+                return _musicEngine.CurrentSetResults;
             }
         }
         private void PlayNotes(IList<int> notes) {

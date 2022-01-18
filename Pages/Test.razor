@@ -20,16 +20,16 @@
             var it = Results[i];
             string resultStr = "";
             switch (it.LR){
-                case Listener.ListenResult.Matched:
+                case Lookups.ListenResult.Matched:
                     resultStr = "\u2714";
                     break;
-                    case Listener.ListenResult.Failed:
+                    case Lookups.ListenResult.Failed:
                     resultStr = "\u2718";
                     break;
-                    case Listener.ListenResult.Abandoned:
+                    case Lookups.ListenResult.Abandoned:
                     resultStr = "\u2700";
                     break;
-                    case Listener.ListenResult.Timeout:
+                    case Lookups.ListenResult.Timeout:
                     resultStr = "\u231a";
                     break;
 

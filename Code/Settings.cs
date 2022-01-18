@@ -8,27 +8,17 @@ namespace EarWorm.Code
 		const string SCORE_KEY = "SCORES";
 		record SettingsData {
 			public string InstrumentKey { get; set; }
+			public bool NoSleep { get; set; }	
 		};
 
 
 		record class SetDefData {
-			public SetGenerator.SetDef Current { get; set; }
-			public List<SetGenerator.SetDef> Saved { get; set; }
+			public SetDef Current { get; set; }
+			public List<SetDef> Saved { get; set; }
 		 }
 		private SettingsData _settingsData;
 		private SetDefData _setDefData;
 
-		static SetGenerator.SetDef s_defaultSetDef = new SetGenerator.SetDef {
-			FirstNoteRoot = true,
-			Key = SetGenerator.Key.C,
-			NoteCount = 3,
-			RangeStart = 60,
-			RangeEnd = 72,
-			Scale = SetGenerator.Scale.Ionian,
-			Style = SetGenerator.Style.ScaleRandom,
-			TestCount = 10,
-			//Description = "Simple Scale. Major. C"
-		};
 		public async Task Boot()
 		{
 			Util.Log("boot settings");
@@ -41,7 +31,8 @@ namespace EarWorm.Code
 			if (json == null)
 				_settingsData = new SettingsData
 				{
-					InstrumentKey = ""
+					InstrumentKey = "P",
+					NoSleep=true,
 				};
 			else
 				_settingsData = JsonSerializer.Deserialize<SettingsData>(json);
@@ -50,7 +41,7 @@ namespace EarWorm.Code
 		public async Task LoadSetDefs() {
 			var json = await Util.ReadStorage(SETDEF_KEY);
 			if (json == null)
-				_setDefData = new SetDefData { Current = s_defaultSetDef };
+				_setDefData = new SetDefData { Current = Defaults.DefaultSetDef };
 			else
 				_setDefData = JsonSerializer.Deserialize<SetDefData>(json);
 			Util.Log(_setDefData.ToString());
@@ -65,7 +56,7 @@ namespace EarWorm.Code
 			var json = JsonSerializer.Serialize(_settingsData);
 			Util.WriteStorage(SETTINGS_KEY,json);
 		}
-		public SetGenerator.SetDef CurrentSet  {
+		public SetDef CurrentSet  {
             get{
 				return _setDefData.Current;
 

@@ -16,22 +16,15 @@ namespace EarWorm.Shared {
 			public List<StaffNote> Notes { get; set; }
 			public Staff() {Notes = new List<StaffNote>();}
 	}
-		public enum ListenResult {
-			Matched,
-			Failed,
-			Timeout,
-			Abandoned,
-			RetryLimit,
-			Init
-		}
+
 		Timer _timer;
 		int Time;
 		int Max;
 		HxModal _modal;
 		bool _listening;
-		MusicEngine.TestResult _result;
+		TestResult _result;
 		Mode _mode;
-		TaskCompletionSource<MusicEngine.TestResult> _tcs;
+		TaskCompletionSource<TestResult> _tcs;
 		static Listener s_listenerInstance;
 		private string _notes;
 		IList<int> _noteList;
@@ -40,7 +33,7 @@ namespace EarWorm.Shared {
 		DateTime _startTime;
 
 
-		MusicEngine.TestDefinition _testDef;
+		TestDefinition _testDef;
 
 		void StartTimer(int max) {
 			Max = Time = max * 10;
@@ -50,7 +43,7 @@ namespace EarWorm.Shared {
 				if (Time == 0) {
 					// timeout
 					_resultIcon = BootstrapIcon.Clock;
-					Stop(ListenResult.Timeout);
+					Stop(Lookups.ListenResult.Timeout);
 				}
 				await InvokeAsync(StateHasChanged);
 			}, null, 0, 100);
@@ -63,8 +56,8 @@ namespace EarWorm.Shared {
 			Util.Log("construct");
 			s_listenerInstance = this;
 		}
-		public async Task<MusicEngine.TestResult> Show(Mode mode, MusicEngine.TestDefinition testDef) {
-			_tcs = new TaskCompletionSource<MusicEngine.TestResult>();
+		public async Task<TestResult> Show(Mode mode, TestDefinition testDef) {
+			_tcs = new TaskCompletionSource<TestResult>();
 			_testDef = testDef;
 			Init(mode);
 			_noteList = _testDef.Notes;
@@ -80,8 +73,8 @@ namespace EarWorm.Shared {
 			_notes = "";
 			_mode = mode;
 			_noteIdx = 0;
-			_result = new MusicEngine.TestResult {
-				LR = ListenResult.Abandoned
+			_result = new TestResult {
+				LR = Lookups.ListenResult.Abandoned
 			};
 			_staffDef = new Staff { Clef = "treble" };
 			_resultIcon = null;
@@ -92,7 +85,7 @@ namespace EarWorm.Shared {
 			// to deal with any last note notification left over
 			if (!_listening)
 				return;
-			var result = ListenResult.Init;
+			var result = Lookups.ListenResult.Init;
 			var me = Application.MusicEngine;
 			
 			// convert midi note number to string n => C#4
@@ -110,7 +103,7 @@ namespace EarWorm.Shared {
 				if (_noteIdx == _noteList.Count) {
 					// all matched - woo hoo
 					_resultIcon = BootstrapIcon.HandThumbsUp;
-					result = ListenResult.Matched;
+					result = Lookups.ListenResult.Matched;
 				}
 			}
 			else {
@@ -118,7 +111,7 @@ namespace EarWorm.Shared {
 				_result.FailedNote = _noteIdx;
 				newNote.Color = "red";
 				_resultIcon = BootstrapIcon.HandThumbsDown;
-				result = ListenResult.Failed;
+				result = Lookups.ListenResult.Failed;
 			}
 
 
@@ -126,7 +119,7 @@ namespace EarWorm.Shared {
 			_notes += String.Format("{0} ", noteStr);
 
 			StateHasChanged();
-			if (result != ListenResult.Init)
+			if (result != Lookups.ListenResult.Init)
 				Stop(result);
 		}
 		private void StartJSListener() {
@@ -144,7 +137,7 @@ namespace EarWorm.Shared {
 			s_listenerInstance.Note(note);
 		}
 
-		private async void Stop(ListenResult result) {
+		private async void Stop(Lookups.ListenResult result) {
 			if (_timer != null) {
 				_timer.Dispose();
 				_timer = null;
@@ -173,7 +166,7 @@ namespace EarWorm.Shared {
 
 		private void HandleClose() {
 			Util.Log($"hc {_listening}");
-			Stop(ListenResult.Abandoned);
+			Stop(Lookups.ListenResult.Abandoned);
 			StateHasChanged();
 		}
 		string[] _noNotes = new string[0];
@@ -184,6 +177,8 @@ namespace EarWorm.Shared {
 
 		}
 		public void Dispose() {
+			Util.NoSleep(false);
+			Util.Log("dispose l");
 			if (_timer != null) {
 				_timer.Dispose();
 				_timer = null;
