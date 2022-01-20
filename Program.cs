@@ -1,16 +1,17 @@
-using EarWorm;
 using EarWorm.Code;
+using EarWorm;
+using Havit.Blazor.Components.Web;   
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Havit.Blazor.Components.Web;         // <------ ADD THIS LINE
-using Havit.Blazor.Components.Web.Bootstrap;  // <------ ADD THIS LINE
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHxServices();
-//var settings = new Settings();
-//builder.Services.AddSingleton<Settings>();
-//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+builder.Services.AddSingleton<SavedData>();
+builder.Services.AddSingleton<MusicEngine>();
+//builder.Services.AddSingleton<SetGenerator>();
+//builder.Services.AddSingleton<Application>();
+
 
 await builder.Build().RunAsync();

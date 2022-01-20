@@ -1,12 +1,13 @@
 ﻿@page "/TestSetup"
 @implements IDisposable
-
+@inject MusicEngine _musicEngine
+@inject SavedData _saver
 <PageTitle>Test Setup</PageTitle>
 
 <h1>Define Test To run</h1>
 <div class="container">
-<HxInputNumber Label="Numer Of tests in a set" @bind-Value="SetSize"/>
-<HxInputNumber Label="Numer Of Reties allowed" @bind-Value="Retries"/>
+<HxInputNumber Label="Numer Of tests in a set" @bind-Value="SetSize" />
+<HxInputNumber Label="Numer Of Retries allowed" @bind-Value="Retries"/>
 
 <DropDown Items=@ScaleItems ButtonText="Scale" Selected=@SelectedScale
 OnSelectionChange=@ScaleChanged/>

@@ -1,5 +1,5 @@
-﻿using EarWorm.Shared;
-using EarWorm.Code;
+﻿using EarWorm.Code;
+using EarWorm.Shared;
 using Microsoft.JSInterop;
 namespace EarWorm.Pages {
     public partial class Test {
@@ -7,10 +7,10 @@ namespace EarWorm.Pages {
 
         bool _running = false;
         Listener _listener;
-        MusicEngine _musicEngine = Application.MusicEngine;
-       
-        public Test() {
-            _musicEngine.Init(Application.Settings.CurrentSet);  
+
+
+        protected override void OnInitialized() {
+            _musicEngine.Init(_saver.CurrentSet);
         }
         String SetDescription => _musicEngine.CurrentSet.Description;
         private string StartButtonText {
@@ -20,42 +20,41 @@ namespace EarWorm.Pages {
         }
         private async void StartClick() {
             _running = !_running;
-            if(_running)
+            if (_running)
                 await StartTestSet();
-            
+
         }
         private async Task StartTestSet() {
             Util.NoSleep(true);
-            foreach(var test in _musicEngine.GetNextTest()) { 
+            var testNum = 1;
+            foreach (var test in _musicEngine.GetNextTest()) {
                 if (!_running) break;
-                test.UsedTries = 0;
-                var i = 0;
                 TestResult result = null;
-                for (; test.UsedTries < test.Numtries; test.UsedTries++) {
-                    i++;
-                   // await Task.Delay(1000);
+                var tries = 0;
+                for (tries =0; tries < test.Numtries; tries++) {
                     PlayNotes(test.Notes);
+                    test.UsedTries = tries + 1;
                     await Task.Delay(test.Notes.Count * 1000);
-
                     result = await _listener.Show(Listener.Mode.Test, test);
                     StateHasChanged();
-                    if(result.LR == Lookups.ListenResult.Matched 
-                        || result.LR == Lookups.ListenResult.Abandoned) { 
-                            break;
+                    if (result.LR == Lookups.ListenResult.Matched
+                        || result.LR == Lookups.ListenResult.Abandoned) {
+                        result.Tries = tries+1;
+                        result.Number = testNum;
+                        break;
                     }
                     // otherwise try again (result = failed)
-                   
+
                 }
                 // dropped out after retry exceeded, we failed
-                if(test.UsedTries == test.Numtries) {
-                    result = new TestResult { Number = i, LR = Lookups.ListenResult.Failed, Tries = test.UsedTries };
+                if (tries == test.Numtries) {
+                    result = new TestResult { Number = testNum, LR = Lookups.ListenResult.Failed, Tries = tries+1 };
                 }
                 _musicEngine.ReportTestResult(result);
+                testNum++; 
                 StateHasChanged();
-
             }
-           // await Task.Delay(1000);
-        }
+         }
 
         private IList<TestResult> Results {
             get {

@@ -1,18 +1,18 @@
 ﻿
 <HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown" 
-Centered="true"
-ShowCloseButton="false">
+		Centered="true"
+		ShowCloseButton="false">
 	<BodyTemplate>
 
-		<div>Try @(_testDef.UsedTries+1) / @_testDef.Numtries</div>
+		<div>Try @(_testDef.UsedTries) / @_testDef.Numtries</div>
 		<div>
 			I heard: @_notes
 		</div>
 		<div id="vf"></div>
 		
 		@if(_resultIcon != null){
-						<HxIcon Icon = "@_resultIcon" CssClass = "display-3" />
-								}
+			<HxIcon Icon = "@_resultIcon" CssClass = "display-3" />
+		}
 		<HxProgress>
     <HxProgressBar Label="" MaxValue=@Max Value=@Time />
 </HxProgress>
@@ -23,12 +23,8 @@ ShowCloseButton="false">
 	</FooterTemplate>
 </HxModal>
 
-
-
 @using Microsoft.JSInterop
 @inject IJSRuntime JS
+@inject MusicEngine _musicEngine
 @implements IDisposable
 
-@code {
-
-}

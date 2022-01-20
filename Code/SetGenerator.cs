@@ -1,13 +1,12 @@
-﻿using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components;
-namespace EarWorm.Code {
+﻿namespace EarWorm.Code {
     public class SetGenerator {
-        
+
 
 
         SetDef _setdef;
-        Random _rng = new Random(Guid.NewGuid().GetHashCode());
+        Random _rng = new (Guid.NewGuid().GetHashCode());
         public SetGenerator(SetDef setDef) {
+            Util.Log(setDef.ToString());
             _setdef = setDef;
         }
         public IEnumerable<TestDefinition> GetNextTest() {
@@ -17,9 +16,9 @@ namespace EarWorm.Code {
                             var notes = ScaleNotes();
                             var td = new TestDefinition {
                                 Notes = notes,
-                                Numtries = _setdef.TestCount,
+                                Numtries = _setdef.Retries,
                                 TimeOut = notes.Count * 2
-                               
+
                             };
                             yield return td;
                         }
@@ -37,7 +36,7 @@ namespace EarWorm.Code {
             var ret = new List<int>(_setdef.NoteCount);
             var scale = Lookups.Scales[_setdef.Scale];
             int previous = -1;
-            if (_setdef.RootMode==Lookups.RootMode.IncludeRoot) {
+            if (_setdef.RootMode == Lookups.RootMode.IncludeRoot) {
                 noteCount--;
                 ret.Add(0);
                 previous = 0;

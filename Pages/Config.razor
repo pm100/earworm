@@ -1,13 +1,20 @@
 ﻿@page "/config"
 @inject IJSRuntime JS
 @implements IDisposable
+
+
 @using EarWorm.Code;
+@inject SavedData _saver
+@inject MusicEngine _musicEngine
+
 <PageTitle>Configure</PageTitle>
 <DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
 OnSelectionChange=@InstrumentChanged/>
 
+<HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
 
 @code {
+
     Dictionary<string, Instrument> _instrumentTable;
     List<string> _instrumentKeys;
     List<string> _instrumentNames;
@@ -16,7 +23,15 @@ OnSelectionChange=@InstrumentChanged/>
         _instrumentTable = Lookups.Instruments;
         _instrumentKeys = _instrumentTable.Keys.ToList();
         _instrumentNames = _instrumentTable.Values.Select(ins=>ins.Name).ToList();
+        //SleepChecked = !_saver.Settings.NoSleep;
     }
+
+    public bool SleepChecked{ get {
+            return !_saver.Settings.NoSleep;
+        }
+        set {
+            _saver.Settings.NoSleep = !value;
+        } }
     public List<string> Items { get
         {
             return _instrumentNames;
@@ -25,8 +40,8 @@ OnSelectionChange=@InstrumentChanged/>
     {
         get
         {
-            var sel = Application.MusicEngine.GetCurrentInstrument();
-            return _instrumentKeys.FindIndex(x => x == sel.key);
+            var sel = _musicEngine.GetCurrentInstrument();
+            return _instrumentKeys.FindIndex(x => x == sel.Key);
         }
     }
     private void Play()
@@ -39,10 +54,12 @@ OnSelectionChange=@InstrumentChanged/>
     {
         Util.Log($"inst = {value}");
         var k = _instrumentKeys[value];
-        Application.MusicEngine.UpdateInstrument( k);
+        _saver.Settings.InstrumentKey = k;
     }
     public void Dispose() {
         Util.Log("displose config");
+        _saver.SaveSettings();
+        _saver.SaveSetDefs();
     }
 }
 

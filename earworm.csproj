@@ -8,6 +8,7 @@
     <RootNamespace>EarWorm</RootNamespace>
     <AssemblyName>earworm</AssemblyName>
 	  <BlazorCacheBootResources>false</BlazorCacheBootResources>
+	  <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,10 @@
     <None Remove="wwwroot\lib\**" />
     <None Remove="wwwroot\sample-data\**" />
     <TypeScriptCompile Remove="wwwroot\lib\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Code\Application.cs" />
   </ItemGroup>
 
   <ItemGroup>

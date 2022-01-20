@@ -1,5 +1,7 @@
 ﻿@page "/test"
 @using EarWorm.Code;
+@inject MusicEngine _musicEngine
+@inject SavedData _saver;
 <Listener @ref=_listener/>
 <p>@SetDescription</p>
 <HxButton Text="@StartButtonText"  OnClick="StartClick" Color="ThemeColor.Primary"/>
@@ -16,30 +18,28 @@
   <tbody>
       @for(int i = 0; i < Results.Count; i++)
       {
-            var j = i;
             var it = Results[i];
             string resultStr = "";
             switch (it.LR){
                 case Lookups.ListenResult.Matched:
-                    resultStr = "\u2714";
+                    resultStr = "\u2714"; // tick
                     break;
-                    case Lookups.ListenResult.Failed:
-                    resultStr = "\u2718";
+                case Lookups.ListenResult.Failed:
+                    resultStr = "\u2718"; // cross
                     break;
-                    case Lookups.ListenResult.Abandoned:
-                    resultStr = "\u2700";
+                case Lookups.ListenResult.Abandoned:
+                    resultStr = "\u2700"; //
                     break;
-                    case Lookups.ListenResult.Timeout:
-                    resultStr = "\u231a";
+                case Lookups.ListenResult.Timeout:
+                    resultStr = "\u231a"; //
                     break;
-
             }
             <tr>
-      <th scope="row">@j</th>
-      <td>@resultStr</td>
-      <td>@it.Tries</td>
-      <td></td>
-    </tr>
-    }
+                <th scope="row">@it.Number</th>
+                <td>@resultStr</td>
+                <td>@it.Tries</td>
+                <td></td>
+            </tr>
+      }
   </tbody>
 </table>

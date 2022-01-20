@@ -1,17 +1,17 @@
-﻿using EarWorm.Shared;
-namespace EarWorm.Code {
+﻿namespace EarWorm.Code {
 
     public class MusicEngine {
 
 
-
-    
-        SetDef _currentSet= null;
+        SetDef _currentSet = null;
         SetGenerator _generator;
         TestDefinition _currentTest;
+        SavedData _saver;
         public SetDef CurrentSet { get { return _currentSet; } }
 
-
+        public MusicEngine(SavedData saver) {
+            _saver = saver;
+        }
         public void Init(SetDef def) {
             _currentSet = def;
             _generator = new SetGenerator(def);
@@ -19,25 +19,23 @@ namespace EarWorm.Code {
         }
 
         public string GetNoteName(int note) {
-            var settings = Application.Settings;
-            //note -= settings.GetNoteOffset();
+            var settings = _saver.Settings;
             var noteStr = Lookups.NoteStrings[note % 12];
             var octave = Math.Floor((float)note / 12) - 1;
             return noteStr + octave.ToString();
         }
 
-
         public Instrument GetCurrentInstrument() {
-            var settings = Application.Settings;
+            var settings = _saver.Settings;
             var inst = settings.InstrumentKey;
             return Lookups.Instruments[inst];
         }
         public void UpdateInstrument(string key) {
-            Application.Settings.InstrumentKey = key;
-            Application.Settings.SaveSettings();
+            _saver.Settings.InstrumentKey = key;
+            _saver.SaveSettings();
         }
 
-  
+
         public IEnumerable<TestDefinition> GetNextTest() {
             var testIdx = 0;
             foreach (var td in _generator.GetNextTest()) {
