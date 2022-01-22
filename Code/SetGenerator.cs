@@ -6,7 +6,7 @@
         SetDef _setdef;
         Random _rng = new (Guid.NewGuid().GetHashCode());
         public SetGenerator(SetDef setDef) {
-            Util.Log(setDef.ToString());
+            Util.Log($"sd={setDef}");
             _setdef = setDef;
         }
         public IEnumerable<TestDefinition> GetNextTest() {
@@ -32,11 +32,14 @@
 
         }
         List<int> ScaleNotes() {
+            Util.Log($"sds={_setdef}");
             var noteCount = _setdef.NoteCount;
             var ret = new List<int>(_setdef.NoteCount);
             var scale = Lookups.Scales[_setdef.Scale];
             int previous = -1;
+            Util.Log($"inc r=true");
             if (_setdef.RootMode == Lookups.RootMode.IncludeRoot) {
+                Util.Log($"inc r=true");
                 noteCount--;
                 ret.Add(0);
                 previous = 0;
@@ -52,7 +55,6 @@
                 }
             }
             return ret.Select(n => RelToAbs(n)).ToList();
-
         }
 
         int RelToAbs(int relNote) {

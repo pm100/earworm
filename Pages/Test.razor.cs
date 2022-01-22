@@ -25,7 +25,8 @@ namespace EarWorm.Pages {
 
         }
         private async Task StartTestSet() {
-            Util.NoSleep(true);
+            if (_saver.Settings.NoSleep)
+                Util.NoSleep(true);
             var testNum = 1;
             foreach (var test in _musicEngine.GetNextTest()) {
                 if (!_running) break;
@@ -62,7 +63,7 @@ namespace EarWorm.Pages {
             }
         }
         private void PlayNotes(IList<int> notes) {
-            var nlist = notes.Select(note => _musicEngine.GetNoteName(note));
+            var nlist = notes.Select(note => _musicEngine.GetNoteName(note,false));
             Util.JS.InvokeVoidAsync("window.playSeq", nlist.ToList());
 
         }

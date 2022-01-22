@@ -3,8 +3,9 @@
 		Centered="true"
 		ShowCloseButton="false">
 	<BodyTemplate>
-
+		@if(_mode==Mode.Test){
 		<div>Try @(_testDef.UsedTries) / @_testDef.Numtries</div>
+		}
 		<div>
 			I heard: @_notes
 		</div>
@@ -26,5 +27,6 @@
 @using Microsoft.JSInterop
 @inject IJSRuntime JS
 @inject MusicEngine _musicEngine
+@inject SavedData _saver
 @implements IDisposable
 

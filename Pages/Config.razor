@@ -10,6 +10,8 @@
 <PageTitle>Configure</PageTitle>
 <DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
 OnSelectionChange=@InstrumentChanged/>
+<Listener @ref=_listener/>
+<HxButton Text="Test Audio" OnClick="TestAudio" Color="ThemeColor.Primary"/>
 
 <HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
 
@@ -18,19 +20,20 @@ OnSelectionChange=@InstrumentChanged/>
     Dictionary<string, Instrument> _instrumentTable;
     List<string> _instrumentKeys;
     List<string> _instrumentNames;
+    Listener _listener;
     public Config()
     {
         _instrumentTable = Lookups.Instruments;
         _instrumentKeys = _instrumentTable.Keys.ToList();
         _instrumentNames = _instrumentTable.Values.Select(ins=>ins.Name).ToList();
-        //SleepChecked = !_saver.Settings.NoSleep;
+        
     }
 
     public bool SleepChecked{ get {
-            return !_saver.Settings.NoSleep;
+            return _saver.Settings.NoSleep;
         }
         set {
-            _saver.Settings.NoSleep = !value;
+            _saver.Settings.NoSleep = value;
         } }
     public List<string> Items { get
         {
@@ -55,6 +58,9 @@ OnSelectionChange=@InstrumentChanged/>
         Util.Log($"inst = {value}");
         var k = _instrumentKeys[value];
         _saver.Settings.InstrumentKey = k;
+    }
+    private async void TestAudio() {
+         await _listener.Show(Listener.Mode.Train, null);
     }
     public void Dispose() {
         Util.Log("displose config");

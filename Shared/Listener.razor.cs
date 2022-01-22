@@ -58,8 +58,6 @@ namespace EarWorm.Shared {
             _tcs = new TaskCompletionSource<TestResult>();
             _testDef = testDef;
             Init(mode);
-            _noteList = _testDef.Notes;
-            StartTimer(testDef.TimeOut);
             await _modal.ShowAsync();
             StartJSListener();
             _startTime = DateTime.Now;
@@ -68,6 +66,13 @@ namespace EarWorm.Shared {
 
         private void Init(Mode mode) {
             Util.Log("init");
+            if(mode == Mode.Train) {
+
+            }
+            else {
+                _noteList = _testDef.Notes;
+                StartTimer(_testDef.TimeOut);
+            }
             _notes = "";
             _mode = mode;
             _noteIdx = 0;
@@ -85,31 +90,37 @@ namespace EarWorm.Shared {
                 return;
             var result = Lookups.ListenResult.Init;
             // convert midi note number to string n => C#4
-            var noteStr = _musicEngine.GetNoteName(n);
+            var noteStr = _musicEngine.GetNoteName(n, true);
             var newNote = new StaffNote();
             _staffDef.Notes.Add(newNote);
 
             // convert to VexFlow format C#4 => C#/4
             newNote.Note = $"{noteStr[0..^1]}/{noteStr[^1]}";
             newNote.Color = "black";
-            // did they play the correct note?
-            if (_noteList[_noteIdx] == n) {
-                // yes, move to the next one
-                _noteIdx++;
-                if (_noteIdx == _noteList.Count) {
-                    // all matched - woo hoo
-                    _resultIcon = BootstrapIcon.HandThumbsUp;
-                    result = Lookups.ListenResult.Matched;
+            if (_mode == Mode.Test) { 
+                // did they play the correct note?
+                if (_noteList[_noteIdx] == n) {
+                    // yes, move to the next one
+                    _noteIdx++;
+                    if (_noteIdx == _noteList.Count) {
+                        // all matched - woo hoo
+                        _resultIcon = BootstrapIcon.HandThumbsUp;
+                        result = Lookups.ListenResult.Matched;
+                    }
+                }
+                else {
+                    // wrong note, we are out of here
+                    _result.FailedNote = _noteIdx;
+                    newNote.Color = "red";
+                    _resultIcon = BootstrapIcon.HandThumbsDown;
+                    result = Lookups.ListenResult.Failed;
                 }
             }
             else {
-                // wrong note, we are out of here
-                _result.FailedNote = _noteIdx;
-                newNote.Color = "red";
-                _resultIcon = BootstrapIcon.HandThumbsDown;
-                result = Lookups.ListenResult.Failed;
+                if(_noteIdx++>8) {
+                    Stop(Lookups.ListenResult.Init);
+                }
             }
-
 
             Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
             _notes += String.Format("{0} ", noteStr);
@@ -173,7 +184,8 @@ namespace EarWorm.Shared {
 
         }
         public void Dispose() {
-            Util.NoSleep(false);
+            if(_saver.Settings.NoSleep)
+                Util.NoSleep(false);
             Util.Log("dispose l");
             if (_timer != null) {
                 _timer.Dispose();

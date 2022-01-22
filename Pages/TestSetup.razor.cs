@@ -3,12 +3,15 @@
 namespace EarWorm.Pages {
     public partial class TestSetup {
         protected override void OnInitialized() {
-           
-         _currentSet = _saver.CurrentSet;   
+
+            _currentSet = _saver.CurrentSet;
         }
         private int SetSize { get { return _currentSet.TestCount; } set { _currentSet.TestCount = value; } }
         private int Retries { get { return _currentSet.Retries; } set { _currentSet.Retries = value; } }
+        private int TimeAllowed { get { return _currentSet.TimeAllowed; } set { _currentSet.TimeAllowed = value; } }
+        private int NotesInTest { get { return _currentSet.NoteCount; } set { _currentSet.NoteCount = value; } }
         private List<string> ScaleItems {
+
             get {
                 return Lookups.ScaleNames.Select(x => x.Item2).ToList();
             }
@@ -38,12 +41,30 @@ namespace EarWorm.Pages {
             }
         }
 
-         SetDef _currentSet;
+        SetDef _currentSet;
 
         public void Dispose() {
             _saver.SaveSetDefs();
 
         }
 
+        public static IList<string> RootModes {
+            get {
+
+                var t = new string[] {
+                    "Include Random Root",
+                    "Include High Root",
+                    "Include Low Root",
+                    "Play Triad",
+                    "None"
+
+                };
+                return t;
+            }
+        }
+        public int SelectedRootMode => (int)_currentSet.RootMode;
+        public void OnRootChanged(int sel) {
+            _currentSet.RootMode = (Lookups.RootMode)sel;
+        }
     }
 }

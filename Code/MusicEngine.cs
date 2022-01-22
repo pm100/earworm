@@ -7,27 +7,36 @@
         SetGenerator _generator;
         TestDefinition _currentTest;
         SavedData _saver;
+        TestSetResult _currentResultSet;
+        SettingsData _settings;
         public SetDef CurrentSet { get { return _currentSet; } }
 
         public MusicEngine(SavedData saver) {
             _saver = saver;
+            _results = new List<TestResult>();
+            _settings = _saver.Settings;
+            _currentResultSet = new TestSetResult {
+                Results = _results,
+                DateTime = DateTime.Now
+            };
+
         }
         public void Init(SetDef def) {
             _currentSet = def;
             _generator = new SetGenerator(def);
-            _results = new List<TestResult>();
+            
         }
 
-        public string GetNoteName(int note) {
-            var settings = _saver.Settings;
+        public string GetNoteName(int note, bool transpose) {
+            if(transpose) note += GetCurrentInstrument().NoteOffset;
             var noteStr = Lookups.NoteStrings[note % 12];
             var octave = Math.Floor((float)note / 12) - 1;
             return noteStr + octave.ToString();
         }
 
         public Instrument GetCurrentInstrument() {
-            var settings = _saver.Settings;
-            var inst = settings.InstrumentKey;
+           
+            var inst = _settings.InstrumentKey;
             return Lookups.Instruments[inst];
         }
         public void UpdateInstrument(string key) {
@@ -49,7 +58,6 @@
         List<TestResult> _results;
         public void ReportTestResult(TestResult result) {
             _results.Add(result);
-
         }
 
         public List<TestResult> CurrentSetResults {

@@ -1,12 +1,8 @@
 ﻿namespace EarWorm.Code {
-    public record Instrument(
-        string Key,
-        string Name,
-        int NoteOffset // /transpositon + means instrument tx down, - means tx up
-     );
+ 
     public static class Lookups {
         public enum RootMode {
-            PlayRoot,  // play root note before the test is played
+        //    PlayRoot,  // play root note before the test is played
             IncludeRoot, // include random root in test
             IncludeRootHigh, // include highest root in range
             IncludeRootLow, // include lowest root in range
@@ -25,9 +21,9 @@
 
         static readonly Dictionary<string, Instrument> _instruments = new()
         {
-            { "P", new Instrument("P", "Piano", 0) },
-            { "G", new Instrument("G", "Guitar", 12) },
-            { "B", new Instrument("B", "Bass", 12) },
+            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0 } },
+            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12 } },
+            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12 } },
         };
         public static Dictionary<string, Instrument> Instruments => _instruments;
 
@@ -151,25 +147,29 @@
         }
     }
     // records
-
+    public record Instrument {
+      public   string Key { get; set; }
+     public string Name { get; set; }
+         public int NoteOffset { get; set; }// /transpositon + means instrument tx down, - means tx up
+    };
     // represents one test to be presented to the user
-    public class TestDefinition {
-        public int Numtries;
-        public int Difficulty;
-        public IList<int> Notes;
-        public Lookups.RootMode RootMode;
-        public int SeqNumber;
-        public int UsedTries;
-        public int TimeOut;
+    public record TestDefinition {
+        public int Numtries { get; set; }
+        public int Difficulty { get; set; }
+        public IList<int> Notes { get; set; }
+        public Lookups.RootMode RootMode { get; set; }
+        public int SeqNumber { get; set; }
+        public int UsedTries { get; set; }
+        public int TimeOut { get; set; }
     };
 
-    public class TestResult {
-        public int Number;
-        public Lookups.ListenResult LR;
-        public int Tries;
-        public int FailedNote;
-        public TimeSpan Time;
-        public TestDefinition TestDef;
+    public record TestResult {
+        public int Number { get; set; }
+        public Lookups.ListenResult LR { get; set; }
+        public int Tries { get; set; }
+        public int FailedNote { get; set; }
+        public TimeSpan Time { get; set; }
+        public TestDefinition TestDef { get; set; }
     }
 
 
@@ -190,6 +190,7 @@
             }
         }
         public int Retries { get; set; }
+        public int TimeAllowed { get; set; }
     }
 
 
@@ -206,7 +207,7 @@
     }
 
     public record TestSetResult {
-        public TestResult Result { get; set; }
+        public List<TestResult> Results { get; set; }
         public DateTime DateTime { get; set; }
     }
 }

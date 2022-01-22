@@ -4,15 +4,31 @@
 @inject SavedData _saver
 <PageTitle>Test Setup</PageTitle>
 
-<h1>Define Test To run</h1>
+<h5>Define Test Set To Run</h5>
 <div class="container">
-<HxInputNumber Label="Numer Of tests in a set" @bind-Value="SetSize" />
-<HxInputNumber Label="Numer Of Retries allowed" @bind-Value="Retries"/>
-
-<DropDown Items=@ScaleItems ButtonText="Scale" Selected=@SelectedScale
+    <div class="row">
+        <div class="col">
+            <HxInputNumber  @bind-Value="SetSize" InputGroupStartText="Number of tests in set"/>
+        </div>
+        <div class="col">
+            <HxInputNumber  @bind-Value="Retries" InputGroupStartText="Retries allowed"/>
+        </div>
+    </div>
+        <div class="row">
+        <div class="col">
+            <HxInputNumber  @bind-Value="NotesInTest" InputGroupStartText="Number of notes in test"/>
+        </div>
+        <div class="col">
+            <HxInputNumber  @bind-Value="TimeAllowed" InputGroupStartText="Time allowed"/>
+        </div>
+    </div>
+<DropDown Label="Scale" Items=@ScaleItems ButtonText="Scale" Selected=@SelectedScale
 OnSelectionChange=@ScaleChanged/>
 
-<DropDown Items=@KeyItems ButtonText="Key" Selected=@SelectedKey
+<DropDown Label="Key" Items=@KeyItems ButtonText="Key" Selected=@SelectedKey
 OnSelectionChange=@KeyChanged/>
+
+<DropDown Label="Root Note" Items=@RootModes ButtonText="Root" Selected=@SelectedRootMode
+    OnSelectionChange=@OnRootChanged/>
 
 </div> 
