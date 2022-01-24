@@ -9,9 +9,14 @@ namespace EarWorm.Shared {
         public class StaffNote {
             public string Note { get; set; }
             public String Color { get; set; }
+            // 0 none
+            // 1 sharp
+            // 2 flat
+            public int Accidental { get; set; }
         }
         public class Staff {
             public string Clef { get; set; }
+            public string Key { get; set; }
             public List<StaffNote> Notes { get; set; }
             public Staff() { Notes = new List<StaffNote>(); }
         }
@@ -30,8 +35,6 @@ namespace EarWorm.Shared {
         int _noteIdx;
         Staff _staffDef;
         DateTime _startTime;
-
-
         TestDefinition _testDef;
 
         void StartTimer(int max) {
@@ -51,7 +54,7 @@ namespace EarWorm.Shared {
             Train
         }
         public Listener() {
-            Util.Log("construct");
+            Util.Log("construct listener");
             s_listenerInstance = this;
         }
         public async Task<TestResult> Show(Mode mode, TestDefinition testDef) {
@@ -79,7 +82,9 @@ namespace EarWorm.Shared {
             _result = new TestResult {
                 LR = Lookups.ListenResult.Abandoned
             };
-            _staffDef = new Staff { Clef = "treble" };
+            var keyStr = _saver.Settings.KeySig ?
+                Lookups.KeyTable[_testDef.Key].Name : "C";
+            _staffDef = new Staff { Clef = "treble", Key=keyStr };
             _resultIcon = null;
         }
 
@@ -90,13 +95,17 @@ namespace EarWorm.Shared {
                 return;
             var result = Lookups.ListenResult.Init;
             // convert midi note number to string n => C#4
-            var noteStr = _musicEngine.GetNoteName(n, true);
+            var noteStr = _musicEngine.GetNoteName(n, true, _testDef.Key);
             var newNote = new StaffNote();
             _staffDef.Notes.Add(newNote);
 
             // convert to VexFlow format C#4 => C#/4
             newNote.Note = $"{noteStr[0..^1]}/{noteStr[^1]}";
             newNote.Color = "black";
+            if (newNote.Note.Contains('#'))
+                newNote.Accidental = 1;
+            else if (newNote.Note.Contains('b'))
+                newNote.Accidental = 2;
             if (_mode == Mode.Test) { 
                 // did they play the correct note?
                 if (_noteList[_noteIdx] == n) {
@@ -117,7 +126,7 @@ namespace EarWorm.Shared {
                 }
             }
             else {
-                if(_noteIdx++>8) {
+                if(_noteIdx++>6) {
                     Stop(Lookups.ListenResult.Init);
                 }
             }
@@ -152,7 +161,8 @@ namespace EarWorm.Shared {
             StopJSListener();
             _result.LR = result;
             Util.Log("hide1");
-            await Task.Delay(1500);
+            if (result!= Lookups.ListenResult.Abandoned)
+                await Task.Delay(1500);
             await _modal.HideAsync();
             Util.Log(string.Format("stop result={0}", result));
         }

@@ -27,8 +27,10 @@
         };
         public static Dictionary<string, Instrument> Instruments => _instruments;
 
-        static readonly String[] _noteStrings = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        public static String[] NoteStrings => _noteStrings;
+        static readonly String[] _noteNamesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+        static readonly String[] _noteNamesFlat = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+        public static String[] NoteNamesSharp => _noteNamesSharp;
+        public static String[] NoteNamesFlat => _noteNamesFlat;
 
         // relative notes in each scale
         static readonly Dictionary<Scale, List<int>> _scales = new() {
@@ -71,7 +73,7 @@
         }
 
         public enum Key {
-            A = 21, // A0 midi note
+            A , 
             ASharp,
             B,
             C,
@@ -83,11 +85,11 @@
             FSharp,
             G,
             GSharp,
-            BFlat = ASharp,
-            DFlat = CSharp,
-            EFlat = DSharp,
-            GFlat = FSharp,
-            AFlat = GSharp
+            BFlat,
+            DFlat,
+            EFlat,
+            GFlat,
+            AFlat
         }
 
         // scale enum to scale name
@@ -101,23 +103,35 @@
             (Scale.Locrian, "Locrian")
         };
         public static List<(Lookups.Scale, String)> ScaleNames => _scaleTable;
-        
+        public record KeyDef (
+              Key Key,
+             String Name ,
+             int Base 
+
+        );
         // key enum to key name
-        static readonly List<(Key, String)> _keyTable = new() {
-            (Key.C, "C"),
-            (Key.CSharp, "C# / Db"),
-            (Key.D, "D"),
-            (Key.DSharp, "D# / Eb"),
-            (Key.E, "E"),
-            (Key.F, "F"),
-            (Key.FSharp, "F# / Gb"),
-            (Key.G, "G"),
-            (Key.GSharp, "G# / Ab"),
-            (Key.A, "A"),
-            (Key.ASharp, "A# / Bb"),
-            (Key.B, "D"),
+        static readonly Dictionary<Key,KeyDef> _keyTable = new() {
+            { Key.A, new KeyDef(Key.A, "A", 21) }, // A0 midi note
+            { Key.ASharp, new KeyDef(Key.ASharp, "A#", 22) },
+            { Key.BFlat, new KeyDef(Key.BFlat, "Bb", 22) },
+            { Key.B, new KeyDef(Key.B, "B", 23) },
+            { Key.C, new KeyDef(Key.C, "C", 24) },
+            { Key.CSharp, new KeyDef(Key.CSharp, "C#", 25) },
+            { Key.DFlat, new KeyDef(Key.DFlat, "Db", 25) },
+            { Key.D, new KeyDef(Key.D, "D", 26) },
+            { Key.DSharp, new KeyDef(Key.DSharp, "D#", 27) },
+            { Key.EFlat, new KeyDef(Key.EFlat, "Eb", 27) },
+            { Key.E, new KeyDef(Key.E, "E", 28) },
+            { Key.F, new KeyDef(Key.F, "F", 29) },
+            { Key.FSharp, new KeyDef(Key.FSharp, "F#", 30) },
+            { Key.GFlat, new KeyDef(Key.GFlat, "Gb", 30) },
+            { Key.G, new KeyDef(Key.G, "G", 31)},
+            {Key.GSharp, new KeyDef(Key.GSharp, "G#", 32)},
+            { Key.AFlat, new KeyDef(Key.AFlat, "Ab", 32) }
         };
-        public static List<(Key, string)> KeyNames => _keyTable;
+        public static Dictionary<Key, KeyDef> KeyTable => _keyTable;
+        public static List<(Key,string)> KeyNames => _keyTable.Select(kv => (kv.Key, kv.Value.Name)).ToList();
+
     }
 
     public static class Defaults {
@@ -142,6 +156,7 @@
                 return new SettingsData {
                     InstrumentKey = "P",
                     NoSleep = true,
+                    Version = 1,
                 };
             }
         }
@@ -161,6 +176,7 @@
         public int SeqNumber { get; set; }
         public int UsedTries { get; set; }
         public int TimeOut { get; set; }
+        public Lookups.Key Key { get; set; }
     };
 
     public record TestResult {
@@ -198,6 +214,8 @@
     public record SettingsData {
         public string InstrumentKey { get; set; }
         public bool NoSleep { get; set; }
+        public bool KeySig { get; set; }
+        public int Version { get; set; }
     };
 
 
@@ -209,6 +227,10 @@
     public record TestSetResult {
         public List<TestResult> Results { get; set; }
         public DateTime DateTime { get; set; }
+    }
+    public record ResultsDB {
+        public TestSetResult Current { get; set; }
+        public List<TestSetResult> Results { get; set; }
     }
 }
 

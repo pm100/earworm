@@ -4,7 +4,8 @@ namespace EarWorm.Code {
     public class SavedData {
         const string SETTINGS_KEY = "SETTINGS";
         const string SETDEF_KEY = "SETDEFS";
-        const string RESULTS_KEY = "RESULTS";
+        const string RESULTS_HISTORY_KEY = "RESULTS_HISTORY";
+        const string CURRENT_TEST = "CURRENT_TEST";
 
         private SettingsData _settingsData;
         private SetDefData _setDefData;
@@ -33,12 +34,11 @@ namespace EarWorm.Code {
             Util.Log(_setDefData.ToString());
         }
         async Task LoadTestResults() {
-            var json = await Util.ReadStorage(RESULTS_KEY);
+            var json = await Util.ReadStorage(RESULTS_HISTORY_KEY);
             if (json == null) { }
               //  _settingsData = Defaults.DefaultSettings;
             else
                 _testResults = JsonSerializer.Deserialize<TestSetResult>(json);
-            Util.Log(_settingsData.ToString());
         }
 
         public void SaveSetDefs() {

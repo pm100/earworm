@@ -63,7 +63,7 @@ namespace EarWorm.Pages {
             }
         }
         private void PlayNotes(IList<int> notes) {
-            var nlist = notes.Select(note => _musicEngine.GetNoteName(note,false));
+            var nlist = notes.Select(note => _musicEngine.GetNoteName(note,false, Lookups.Key.C));
             Util.JS.InvokeVoidAsync("window.playSeq", nlist.ToList());
 
         }

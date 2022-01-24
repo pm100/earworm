@@ -14,7 +14,7 @@
     }
 window.drawStaff = (divName, staffDef) => {
     const VF = Vex.Flow;
-    // Create an SVG renderer and attach it to the DIV element named "vf".
+    // Create an SVG renderer and attach it to the DIV element named in divName.
     const div = document.getElementById(divName);
     div.innerHTML = "";
     var renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
@@ -29,15 +29,20 @@ window.drawStaff = (divName, staffDef) => {
 
     // Add a clef and time signature.
     stave.addClef(staffDef.clef);
-
+    stave.addKeySignature(staffDef.key);
+    console.log("keysig=" + staffDef.key);
     // Connect it to the rendering context and draw!
     stave.setContext(context).draw();
     if (staffDef.notes.length == 0)
         return;
     var notes = staffDef.notes.map(n => {
         var nt = new VF.StaveNote({ clef: staffDef.clef, keys: [n.note], duration: "q" });
-        console.log("color " + n.color);
-        nt.setStyle({ fillStyle: n.color, strokeStyle: n.color});
+
+        nt.setStyle({ fillStyle: n.color, strokeStyle: n.color });
+        if (n.accidental == 1)
+            nt.addAccidental(0, new VF.Accidental("#"));
+        if (n.accidental == 2)
+            nt.addAccidental(0, new VF.Accidental("b"));
         return nt;
     });
     // Create a voice in x/4 and add above notes

@@ -27,9 +27,11 @@
             
         }
 
-        public string GetNoteName(int note, bool transpose) {
+        public string GetNoteName(int note, bool transpose, Lookups.Key key) {
             if(transpose) note += GetCurrentInstrument().NoteOffset;
-            var noteStr = Lookups.NoteStrings[note % 12];
+            var noteStr = (int)key > (int)Lookups.Key.GSharp
+                ? Lookups.NoteNamesFlat[note % 12]
+                : Lookups.NoteNamesSharp[note % 12];
             var octave = Math.Floor((float)note / 12) - 1;
             return noteStr + octave.ToString();
         }

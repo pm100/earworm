@@ -15,6 +15,8 @@ OnSelectionChange=@InstrumentChanged/>
 
 <HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
 
+<HxInputCheckbox @bind-Value="KeySig" Label="Show real key signature" />
+
 @code {
 
     Dictionary<string, Instrument> _instrumentTable;
@@ -23,12 +25,19 @@ OnSelectionChange=@InstrumentChanged/>
     Listener _listener;
     public Config()
     {
+        Util.Log("const config");
         _instrumentTable = Lookups.Instruments;
         _instrumentKeys = _instrumentTable.Keys.ToList();
         _instrumentNames = _instrumentTable.Values.Select(ins=>ins.Name).ToList();
-        
-    }
 
+    }
+    public bool KeySig {
+        get{
+            return _saver.Settings.KeySig;
+        }
+        set
+        { _saver.Settings.KeySig = value; }
+    }
     public bool SleepChecked{ get {
             return _saver.Settings.NoSleep;
         }
@@ -60,7 +69,10 @@ OnSelectionChange=@InstrumentChanged/>
         _saver.Settings.InstrumentKey = k;
     }
     private async void TestAudio() {
-         await _listener.Show(Listener.Mode.Train, null);
+        var fakeTest = new TestDefinition {
+              Key = _saver.CurrentSet.Key
+            };
+        await _listener.Show(Listener.Mode.Train, fakeTest);
     }
     public void Dispose() {
         Util.Log("displose config");

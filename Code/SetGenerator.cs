@@ -17,7 +17,8 @@
                             var td = new TestDefinition {
                                 Notes = notes,
                                 Numtries = _setdef.Retries,
-                                TimeOut = notes.Count * 2
+                                TimeOut = notes.Count * 2,
+                                Key = _setdef.Key,
 
                             };
                             yield return td;
