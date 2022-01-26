@@ -60,7 +60,8 @@
 
         int RelToAbs(int relNote) {
             // convert a scale relative note to an actual note in range
-            var r = (int)_setdef.Key + relNote;
+            var offset = Lookups.KeyTable[_setdef.Key].Base;
+            var r = offset + relNote;
             var candidates = new List<int>();
             for (int octave = 0; octave < 9; octave++) {
                 var candidate = r + (octave * 12);

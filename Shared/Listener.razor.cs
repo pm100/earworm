@@ -12,6 +12,7 @@ namespace EarWorm.Shared {
             // 0 none
             // 1 sharp
             // 2 flat
+            // 3 natural
             public int Accidental { get; set; }
         }
         public class Staff {
@@ -84,7 +85,8 @@ namespace EarWorm.Shared {
             };
             var keyStr = _saver.Settings.KeySig ?
                 Lookups.KeyTable[_testDef.Key].Name : "C";
-            _staffDef = new Staff { Clef = "treble", Key=keyStr };
+            var inst = _musicEngine.GetCurrentInstrument();
+            _staffDef = new Staff { Clef = inst.Cleff.ToString().ToLower(), Key=keyStr };
             _resultIcon = null;
         }
 
@@ -95,17 +97,27 @@ namespace EarWorm.Shared {
                 return;
             var result = Lookups.ListenResult.Init;
             // convert midi note number to string n => C#4
-            var noteStr = _musicEngine.GetNoteName(n, true, _testDef.Key);
+
+            // for display of note names, abolute names but transposed
+            var absNoteStr = _musicEngine.GetAbsNoteName(n, true);
+
+            // note name for display on staff
+            var relNoteStr = _musicEngine.GetNoteName(n, true, _testDef.Key);
+
             var newNote = new StaffNote();
             _staffDef.Notes.Add(newNote);
 
             // convert to VexFlow format C#4 => C#/4
-            newNote.Note = $"{noteStr[0..^1]}/{noteStr[^1]}";
+
+
+            newNote.Note = $"{relNoteStr[0]}/{relNoteStr[^1]}";
             newNote.Color = "black";
-            if (newNote.Note.Contains('#'))
+            if (relNoteStr.Contains('#'))
                 newNote.Accidental = 1;
-            else if (newNote.Note.Contains('b'))
+            else if (relNoteStr.Contains('b'))
                 newNote.Accidental = 2;
+            else if (relNoteStr.Contains('@'))
+                newNote.Accidental = 3;
             if (_mode == Mode.Test) { 
                 // did they play the correct note?
                 if (_noteList[_noteIdx] == n) {
@@ -132,7 +144,7 @@ namespace EarWorm.Shared {
             }
 
             Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
-            _notes += String.Format("{0} ", noteStr);
+            _notes += String.Format("{0} ", absNoteStr);
 
             StateHasChanged();
             if (result != Lookups.ListenResult.Init)

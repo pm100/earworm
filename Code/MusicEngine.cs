@@ -29,13 +29,20 @@
 
         public string GetNoteName(int note, bool transpose, Lookups.Key key) {
             if(transpose) note += GetCurrentInstrument().NoteOffset;
-            var noteStr = (int)key > (int)Lookups.Key.GSharp
-                ? Lookups.NoteNamesFlat[note % 12]
-                : Lookups.NoteNamesSharp[note % 12];
-            var octave = Math.Floor((float)note / 12) - 1;
-            return noteStr + octave.ToString();
+            var noteStrings = Lookups.KeyTable[key].NoteNames;
+            return NoteNameCalc(noteStrings, note);
         }
 
+        public string GetAbsNoteName(int note, bool transpose) {
+            if (transpose) note += GetCurrentInstrument().NoteOffset;
+            return NoteNameCalc( Lookups.NoteNames, note);  
+        }
+        private string NoteNameCalc(string[]noteStrings, int noteNum) {
+            var noteStr = noteStrings[noteNum % 12];
+            var octave = Math.Floor((float)noteNum / 12) - 1;
+            return noteStr + octave.ToString();
+
+        }
         public Instrument GetCurrentInstrument() {
            
             var inst = _settings.InstrumentKey;

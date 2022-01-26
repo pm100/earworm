@@ -36,13 +36,19 @@ window.drawStaff = (divName, staffDef) => {
     if (staffDef.notes.length == 0)
         return;
     var notes = staffDef.notes.map(n => {
-        var nt = new VF.StaveNote({ clef: staffDef.clef, keys: [n.note], duration: "q" });
+        console.log("acc=", n.accidental);
+        console.log("note=", n.note);
+
+        var nt = new VF.StaveNote({ clef: staffDef.clef, keys: [n.note], duration: "q" ,auto_stem:true});
 
         nt.setStyle({ fillStyle: n.color, strokeStyle: n.color });
         if (n.accidental == 1)
             nt.addAccidental(0, new VF.Accidental("#"));
         if (n.accidental == 2)
             nt.addAccidental(0, new VF.Accidental("b"));
+        if (n.accidental == 3)
+            nt.addAccidental(0, new VF.Accidental("n"));
+
         return nt;
     });
     // Create a voice in x/4 and add above notes

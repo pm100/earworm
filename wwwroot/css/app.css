@@ -62,3 +62,8 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.dropDownScroll {
+    max-height: 300px;
+       overflow-y: auto;
+}

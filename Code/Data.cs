@@ -1,8 +1,8 @@
 ﻿namespace EarWorm.Code {
- 
+
     public static class Lookups {
         public enum RootMode {
-        //    PlayRoot,  // play root note before the test is played
+            //    PlayRoot,  // play root note before the test is played
             IncludeRoot, // include random root in test
             IncludeRootHigh, // include highest root in range
             IncludeRootLow, // include lowest root in range
@@ -16,41 +16,39 @@
             Timeout, // took too long
             Abandoned, // gave up (clicked skip)
             RetryLimit, // too many goes
-            Init 
+            Init
         }
 
         static readonly Dictionary<string, Instrument> _instruments = new()
         {
-            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0 } },
-            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12 } },
-            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12 } },
+            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0, Cleff=Cleff.Treble } },
+            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12, Cleff = Cleff.Treble } },
+            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12, Cleff = Cleff.Bass } },
         };
         public static Dictionary<string, Instrument> Instruments => _instruments;
 
-        static readonly String[] _noteNamesSharp = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        static readonly String[] _noteNamesFlat = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        public static String[] NoteNamesSharp => _noteNamesSharp;
-        public static String[] NoteNamesFlat => _noteNamesFlat;
+        static readonly String[] _noteNames = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+        public static String[] NoteNames => _noteNames;
 
         // relative notes in each scale
         static readonly Dictionary<Scale, List<int>> _scales = new() {
-            {Scale.Ionian, new List<int>() {0,2,4,5,7,9,11}},
-            {Scale.Dorian, new List<int>() {0,2,3,5,7,9,10}},
-            {Scale.Phrygian, new List<int>() {0,1,3,5,7,9,10}},
-            {Scale.Lydian, new List<int>() {0,2,4,6,7,9,11}},
-            {Scale.Aeolian, new List<int>() {0,2,3,5,7,8,10}},
-            {Scale.Locrian, new List<int>() {0,1,2,5,6,9,10}},
-            {Scale.Mixolydian, new List<int>() {0,2,4,5,7,9,10}},
-            {Scale.WholeTone, new List<int>() {0,2,4,6,8,10}},
-            {Scale.MelodicMinor, new List<int>() {0,2,3,5,7,9,11}},
-            {Scale.HarmonicMinor, new List<int>() {0,2,3,5,7,8,11}},
-            {Scale.DiminishedWH, new List<int>() {0,2,3,5,6,8,9,11}},
-            {Scale.DiminishedHW, new List<int>() {0,1,3,4,6,7,9,10}},
-            {Scale.Altered, new List<int>() {0,1,3,4,6,8,10}},
+            { Scale.Ionian, new List<int>() { 0, 2, 4, 5, 7, 9, 11 } },
+            { Scale.Dorian, new List<int>() { 0, 2, 3, 5, 7, 9, 10 } },
+            { Scale.Phrygian, new List<int>() { 0, 1, 3, 5, 7, 9, 10 } },
+            { Scale.Lydian, new List<int>() { 0, 2, 4, 6, 7, 9, 11 } },
+            { Scale.Aeolian, new List<int>() { 0, 2, 3, 5, 7, 8, 10 } },
+            { Scale.Locrian, new List<int>() { 0, 1, 2, 5, 6, 9, 10 } },
+            { Scale.Mixolydian, new List<int>() { 0, 2, 4, 5, 7, 9, 10 } },
+            { Scale.WholeTone, new List<int>() { 0, 2, 4, 6, 8, 10 } },
+            { Scale.MelodicMinor, new List<int>() { 0, 2, 3, 5, 7, 9, 11 } },
+            { Scale.HarmonicMinor, new List<int>() { 0, 2, 3, 5, 7, 8, 11 } },
+            { Scale.DiminishedWH, new List<int>() { 0, 2, 3, 5, 6, 8, 9, 11 } },
+            { Scale.DiminishedHW, new List<int>() { 0, 1, 3, 4, 6, 7, 9, 10 } },
+            { Scale.Altered, new List<int>() { 0, 1, 3, 4, 6, 8, 10 } },
         };
         public static Dictionary<Scale, List<int>> Scales => _scales;
 
-       
+
         public enum Style {
             ScaleRandom,
             ScaleMelodySet,
@@ -73,7 +71,7 @@
         }
 
         public enum Key {
-            A , 
+            A,
             ASharp,
             B,
             C,
@@ -91,7 +89,10 @@
             GFlat,
             AFlat
         }
-
+        public enum Cleff {
+            Treble,
+            Bass
+        }
         // scale enum to scale name
         static readonly List<(Lookups.Scale, String)> _scaleTable = new() {
             (Scale.Ionian, "Major"),
@@ -103,34 +104,37 @@
             (Scale.Locrian, "Locrian")
         };
         public static List<(Lookups.Scale, String)> ScaleNames => _scaleTable;
-        public record KeyDef (
+        public record KeyDef(
               Key Key,
-             String Name ,
-             int Base 
+             String Name,
+             int Base,
+             string[] NoteNames
 
         );
-        // key enum to key name
-        static readonly Dictionary<Key,KeyDef> _keyTable = new() {
-            { Key.A, new KeyDef(Key.A, "A", 21) }, // A0 midi note
-            { Key.ASharp, new KeyDef(Key.ASharp, "A#", 22) },
-            { Key.BFlat, new KeyDef(Key.BFlat, "Bb", 22) },
-            { Key.B, new KeyDef(Key.B, "B", 23) },
-            { Key.C, new KeyDef(Key.C, "C", 24) },
-            { Key.CSharp, new KeyDef(Key.CSharp, "C#", 25) },
-            { Key.DFlat, new KeyDef(Key.DFlat, "Db", 25) },
-            { Key.D, new KeyDef(Key.D, "D", 26) },
-            { Key.DSharp, new KeyDef(Key.DSharp, "D#", 27) },
-            { Key.EFlat, new KeyDef(Key.EFlat, "Eb", 27) },
-            { Key.E, new KeyDef(Key.E, "E", 28) },
-            { Key.F, new KeyDef(Key.F, "F", 29) },
-            { Key.FSharp, new KeyDef(Key.FSharp, "F#", 30) },
-            { Key.GFlat, new KeyDef(Key.GFlat, "Gb", 30) },
-            { Key.G, new KeyDef(Key.G, "G", 31)},
-            {Key.GSharp, new KeyDef(Key.GSharp, "G#", 32)},
-            { Key.AFlat, new KeyDef(Key.AFlat, "Ab", 32) }
+        // key enum to key info
+        // 21 = A0 midi note
+        // the note names drive the staff display X@ menas display X natural
+        static readonly Dictionary<Key, KeyDef> _keyTable = new() {
+            { Key.A, new KeyDef(Key.A, "A", 21, new string[] { "C@", "C", "D", "D#", "E", "F@", "F#", "G@", "G#", "A", "A#", "B" }) },
+            { Key.ASharp, new KeyDef(Key.ASharp, "A#", 22, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.BFlat, new KeyDef(Key.BFlat, "Bb", 22, new string[] { "C", "Db", "D", "E", "E@", "F", "Gb", "G", "Ab", "A", "B", "B@" }) },
+            { Key.B, new KeyDef(Key.B, "B", 23, new string[] { "C@", "C#", "D@", "D#", "E", "F@", "F#", "G@", "G#", "A@", "A", "B" }) },
+            { Key.C, new KeyDef(Key.C, "C", 24, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.CSharp, new KeyDef(Key.CSharp, "C#", 25, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.DFlat, new KeyDef(Key.DFlat, "Db", 25, new string[] { "C@", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.D, new KeyDef(Key.D, "D", 26, new string[] { "C@", "C", "D", "D#", "E", "F@", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.DSharp, new KeyDef(Key.DSharp, "D#", 27, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.EFlat, new KeyDef(Key.EFlat, "Eb", 27, new string[] { "C", "Db", "D", "E", "E@", "F", "Gb", "G", "A", "A@", "Bb", "B@" }) },
+            { Key.E, new KeyDef(Key.E, "E", 28, new string[] { "C@", "C#", "D@", "D#", "E", "F@", "F#", "G@", "G#", "A", "A#", "B" }) },
+            { Key.F, new KeyDef(Key.F, "F", 29, new string[] { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Gb", "A", "Bb", "B@" }) },
+            { Key.FSharp, new KeyDef(Key.FSharp, "F#", 30, new string[] { "C@", "C", "D", "D#", "E", "F@", "F", "G", "G#", "A", "A#", "B" }) },
+            { Key.GFlat, new KeyDef(Key.GFlat, "Gb", 30, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.G, new KeyDef(Key.G, "G", 31, new string[] { "C", "C#", "D", "D#", "E", "F@", "F", "G", "G#", "A", "A#", "B" }) },
+            { Key.GSharp, new KeyDef(Key.GSharp, "G#", 32, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.AFlat, new KeyDef(Key.AFlat, "Ab", 32, new string[] { "C", "D", "D@", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B@" }) },
         };
         public static Dictionary<Key, KeyDef> KeyTable => _keyTable;
-        public static List<(Key,string)> KeyNames => _keyTable.Select(kv => (kv.Key, kv.Value.Name)).ToList();
+        public static List<(Key, string)> KeyNames => _keyTable.Select(kv => (kv.Key, kv.Value.Name)).ToList();
 
     }
 
@@ -163,9 +167,12 @@
     }
     // records
     public record Instrument {
-      public   string Key { get; set; }
-     public string Name { get; set; }
-         public int NoteOffset { get; set; }// /transpositon + means instrument tx down, - means tx up
+        public string Key { get; set; }
+        public string Name { get; set; }
+        public int NoteOffset { get; set; }// /transpositon + means instrument tx down, - means tx up
+        public Lookups.Cleff Cleff { get; set; }  
+        public int RangeLow { get; set; }     
+        public int RangeHigh { get; set; }
     };
     // represents one test to be presented to the user
     public record TestDefinition {
