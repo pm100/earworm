@@ -4,7 +4,10 @@
 @inject SavedData _saver;
 <Listener @ref=_listener/>
 <p>@SetDescription</p>
-<HxButton Text="@StartButtonText"  OnClick="StartClick" Color="ThemeColor.Primary"/>
+<HxButton Text="@StartButtonText"  OnClick="StartClick" Color="ThemeColor.Primary" Enabled="ShowButtons"/>
+@if(@ShowResume){
+<HxButton Text="Resume"  OnClick="ResumeClick" Color="ThemeColor.Primary" Enabled="ShowButtons"/>
+}
 
 <table class="table table-sm">
   <thead>
@@ -28,14 +31,14 @@
                     resultStr = "\u2718"; // cross
                     break;
                 case Lookups.ListenResult.Abandoned:
-                    resultStr = "\u2700"; //
+                    resultStr = "\u2700"; // scissors
                     break;
                 case Lookups.ListenResult.Timeout:
-                    resultStr = "\u231a"; //
+                    resultStr = "\u231a"; // clock
                     break;
             }
             <tr>
-                <th scope="row">@it.Number</th>
+                <th scope="row">@(it.TestDef.SeqNumber + 1)</th>
                 <td>@resultStr</td>
                 <td>@it.Tries</td>
                 <td></td>

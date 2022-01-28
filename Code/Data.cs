@@ -16,14 +16,15 @@
             Timeout, // took too long
             Abandoned, // gave up (clicked skip)
             RetryLimit, // too many goes
+            Stop,
             Init
         }
 
         static readonly Dictionary<string, Instrument> _instruments = new()
         {
-            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0, Cleff=Cleff.Treble } },
-            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12, Cleff = Cleff.Treble } },
-            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12, Cleff = Cleff.Bass } },
+            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0, Clef=Clef.Treble } },
+            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12, Clef = Clef.Treble } },
+            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12, Clef = Clef.Bass } },
         };
         public static Dictionary<string, Instrument> Instruments => _instruments;
 
@@ -89,7 +90,7 @@
             GFlat,
             AFlat
         }
-        public enum Cleff {
+        public enum Clef {
             Treble,
             Bass
         }
@@ -170,7 +171,7 @@
         public string Key { get; set; }
         public string Name { get; set; }
         public int NoteOffset { get; set; }// /transpositon + means instrument tx down, - means tx up
-        public Lookups.Cleff Cleff { get; set; }  
+        public Lookups.Clef Clef { get; set; }  
         public int RangeLow { get; set; }     
         public int RangeHigh { get; set; }
     };
@@ -187,7 +188,7 @@
     };
 
     public record TestResult {
-        public int Number { get; set; }
+       // public int Number { get; set; }
         public Lookups.ListenResult LR { get; set; }
         public int Tries { get; set; }
         public int FailedNote { get; set; }

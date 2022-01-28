@@ -9,6 +9,12 @@
         SavedData _saver;
         TestSetResult _currentResultSet;
         SettingsData _settings;
+        public enum State {
+            Fresh,
+            InSet,
+            ForcedClear
+        }
+        int _testIdx;
         public SetDef CurrentSet { get { return _currentSet; } }
 
         public MusicEngine(SavedData saver) {
@@ -19,14 +25,29 @@
                 Results = _results,
                 DateTime = DateTime.Now
             };
-
+            _testIdx = 0;
         }
-        public void Init(SetDef def) {
-            _currentSet = def;
-            _generator = new SetGenerator(def);
-            
+        public State Init(SetDef def) {
+            var ret = State.Fresh;
+            if (def != _currentSet) {
+                ret =  State.ForcedClear;
+                Clear();
+            }
+            if (_testIdx > 0) {
+                ret = State.InSet;  
+            }
+            if (ret != State.InSet) {
+                _currentSet = def with { };
+                _generator = new SetGenerator(def, _testIdx);
+                Clear();
+            }
+            return ret;
+ 
         }
-
+        public void Clear() {
+            _testIdx = 0;
+            _results.Clear();   
+        }
         public string GetNoteName(int note, bool transpose, Lookups.Key key) {
             if(transpose) note += GetCurrentInstrument().NoteOffset;
             var noteStrings = Lookups.KeyTable[key].NoteNames;
@@ -55,13 +76,14 @@
 
 
         public IEnumerable<TestDefinition> GetNextTest() {
-            var testIdx = 0;
+            
             foreach (var td in _generator.GetNextTest()) {
                 _currentTest = td;
-                testIdx++;
+                _testIdx++;
                 yield return _currentTest;
 
             }
+            _testIdx = 0;
         }
 
         List<TestResult> _results;

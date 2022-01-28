@@ -21,7 +21,7 @@ namespace EarWorm.Shared {
             public List<StaffNote> Notes { get; set; }
             public Staff() { Notes = new List<StaffNote>(); }
         }
-
+        static readonly string[] NoNotes = Array.Empty<string>();
         Timer _timer;
         int Time;
         int Max;
@@ -86,11 +86,11 @@ namespace EarWorm.Shared {
             var keyStr = _saver.Settings.KeySig ?
                 Lookups.KeyTable[_testDef.Key].Name : "C";
             var inst = _musicEngine.GetCurrentInstrument();
-            _staffDef = new Staff { Clef = inst.Cleff.ToString().ToLower(), Key=keyStr };
+            _staffDef = new Staff { Clef = inst.Clef.ToString().ToLower(), Key=keyStr };
             _resultIcon = null;
         }
 
-        private void Note(int n) {
+        private async Task Note(int n) {
             Util.Log($"note = {n}, listen = {_listening}");
             // to deal with any last note notification left over
             if (!_listening)
@@ -139,11 +139,11 @@ namespace EarWorm.Shared {
             }
             else {
                 if(_noteIdx++>6) {
-                    Stop(Lookups.ListenResult.Init);
+                    Stop(Lookups.ListenResult.Stop);
                 }
             }
 
-            Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
+            await Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
             _notes += String.Format("{0} ", absNoteStr);
 
             StateHasChanged();
@@ -161,8 +161,8 @@ namespace EarWorm.Shared {
 
         // JS listener call back when note heard
         [JSInvokable]
-        public static void NoteHeard(int note) {
-            s_listenerInstance.Note(note);
+        public static async void NoteHeard(int note) {
+            await s_listenerInstance.Note(note);
         }
 
         private async void Stop(Lookups.ListenResult result) {
@@ -173,7 +173,7 @@ namespace EarWorm.Shared {
             StopJSListener();
             _result.LR = result;
             Util.Log("hide1");
-            if (result!= Lookups.ListenResult.Abandoned)
+            if (result!= Lookups.ListenResult.Abandoned && result !=Lookups.ListenResult.Stop)
                 await Task.Delay(1500);
             await _modal.HideAsync();
             Util.Log(string.Format("stop result={0}", result));
@@ -189,19 +189,21 @@ namespace EarWorm.Shared {
             Util.Log(string.Format("set task={0}", _result));
             _result.Time = DateTime.Now - _startTime;
             _tcs.SetResult(_result);
-
             _tcs = null;
         }
 
-        private void HandleClose() {
-            Util.Log($"hc {_listening}");
+        private void HandleSkip() {
             Stop(Lookups.ListenResult.Abandoned);
             StateHasChanged();
         }
-        string[] _noNotes = new string[0];
-        private void Shown() {
+        private void HandleStop() {
+            Stop(Lookups.ListenResult.Stop);
+            StateHasChanged();
+        }
+
+        private async void Shown() {
             Util.Log($"shown {_listening}");
-            Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
+            await Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
             _listening = true;
 
         }

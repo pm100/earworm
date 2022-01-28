@@ -4,21 +4,24 @@
 
 
         SetDef _setdef;
+        int _testCount;
         Random _rng = new (Guid.NewGuid().GetHashCode());
-        public SetGenerator(SetDef setDef) {
+        public SetGenerator(SetDef setDef, int startAt) {
             Util.Log($"sd={setDef}");
             _setdef = setDef;
+            _testCount = startAt;
         }
         public IEnumerable<TestDefinition> GetNextTest() {
             switch (_setdef.Style) {
                 case Lookups.Style.ScaleRandom: {
-                        for (int j = 0; j < _setdef.TestCount; j++) {
+                        for (; _testCount < _setdef.TestCount; _testCount++) {
                             var notes = ScaleNotes();
                             var td = new TestDefinition {
                                 Notes = notes,
                                 Numtries = _setdef.Retries,
                                 TimeOut = notes.Count * 2,
                                 Key = _setdef.Key,
+                                SeqNumber = _testCount
 
                             };
                             yield return td;
