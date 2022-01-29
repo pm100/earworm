@@ -19,7 +19,7 @@
                             var td = new TestDefinition {
                                 Notes = notes,
                                 Numtries = _setdef.Retries,
-                                TimeOut = notes.Count * 2,
+                                TimeOut = notes.Count * _setdef.TimeAllowed,
                                 Key = _setdef.Key,
                                 SeqNumber = _testCount
 

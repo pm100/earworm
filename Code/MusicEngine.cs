@@ -7,7 +7,7 @@
         SetGenerator _generator;
         TestDefinition _currentTest;
         SavedData _saver;
-        TestSetResult _currentResultSet;
+       // TestSetResult _currentResultSet;
         SettingsData _settings;
         public enum State {
             Fresh,
@@ -19,21 +19,21 @@
 
         public MusicEngine(SavedData saver) {
             _saver = saver;
-            _results = new List<TestResult>();
+           // _results = new List<TestResult>();
             _settings = _saver.Settings;
-            _currentResultSet = new TestSetResult {
-                Results = _results,
-                DateTime = DateTime.Now
-            };
+           // _currentResultSet = new TestSetResult {
+           //     Results = _results,
+           //     DateTime = DateTime.Now
+           // };
             _testIdx = 0;
         }
         public State Init(SetDef def) {
             var ret = State.Fresh;
             if (def != _currentSet) {
                 ret =  State.ForcedClear;
-                Clear();
+             
             }
-            if (_testIdx > 0) {
+            else if (_testIdx > 0) {
                 ret = State.InSet;  
             }
             if (ret != State.InSet) {
@@ -46,7 +46,7 @@
         }
         public void Clear() {
             _testIdx = 0;
-            _results.Clear();   
+            _saver.CurrentResults.Results.Clear(); 
         }
         public string GetNoteName(int note, bool transpose, Lookups.Key key) {
             if(transpose) note += GetCurrentInstrument().NoteOffset;
@@ -86,14 +86,20 @@
             _testIdx = 0;
         }
 
-        List<TestResult> _results;
-        public void ReportTestResult(TestResult result) {
-            _results.Add(result);
+      //  List<TestResult> _results;
+        public async void ReportTestResult(TestResult result) {
+            CurrentSetResults.Add(result);
+            _saver.CurrentResults.SetDefinition = _currentSet;
+            await _saver.SaveCurrentResults();
+        }
+
+        internal void EndSet() {
+            _saver.WriteResult();
         }
 
         public List<TestResult> CurrentSetResults {
             get {
-                return _results;
+                return _saver.CurrentResults.Results;
             }
         }
     }

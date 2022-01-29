@@ -17,7 +17,7 @@ namespace EarWorm.Code {
             return await s_JS.InvokeAsync<string>("localStorage.getItem", key);
         }
 
-        public async static void WriteStorage(string key, string value) {
+        public async static Task WriteStorage(string key, string value) {
             await s_JS.InvokeVoidAsync("localStorage.setItem", key, value);
         }
 

@@ -4,9 +4,9 @@ using Microsoft.JSInterop;
 namespace EarWorm.Pages {
     public partial class Test {
 
-        bool _midTest = false;
+       // bool _midTest = false;
         bool _running = false;
-        bool _listening = false;
+      //  bool _listening = false;
         MusicEngine.State _initState;
         Listener _listener;
         bool ShowButtons => _running == false;
@@ -33,7 +33,7 @@ namespace EarWorm.Pages {
                 await StartTestSet();
         }
         private async Task StartTestSet() {
-            _midTest = true;
+         //   _midTest = true;
             if (_saver.Settings.NoSleep)
                 Util.NoSleep(true);
            // var testNum = 1;
@@ -46,10 +46,10 @@ namespace EarWorm.Pages {
                     PlayNotes(test.Notes);
                     test.UsedTries = tries + 1;
                     await Task.Delay(test.Notes.Count * 1000);
-                    _listening = true;
+                  //  _listening = true;
                     result = await _listener.Show(Listener.Mode.Test, test);
                     result.TestDef = test;
-                    _listening = false;
+                 //   _listening = false;
                     StateHasChanged();
                     if (result.LR == Lookups.ListenResult.Stop) {
                         _running = false;
@@ -76,7 +76,8 @@ namespace EarWorm.Pages {
                 //testNum++; 
                 StateHasChanged();
             }
-            _midTest = false;
+            // _midTest = false;
+            _musicEngine.EndSet();
          }
 
         private IList<TestResult> Results {

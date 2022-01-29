@@ -151,8 +151,9 @@
                         RangeEnd = 72,
                         Scale = Lookups.Scale.Ionian,
                         Style = Lookups.Style.ScaleRandom,
-                        TestCount = 10,
+                        TestCount = 5,
                         Retries = 5,
+                        TimeAllowed = 2
                     };
             }
         }
@@ -162,6 +163,7 @@
                     InstrumentKey = "P",
                     NoSleep = true,
                     Version = 1,
+                    KeySig = true
                 };
             }
         }
@@ -234,6 +236,7 @@
 
     public record TestSetResult {
         public List<TestResult> Results { get; set; }
+        public SetDef SetDefinition { get; set; }   
         public DateTime DateTime { get; set; }
     }
     public record ResultsDB {
