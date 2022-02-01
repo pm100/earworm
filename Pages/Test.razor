@@ -19,9 +19,9 @@
     </tr>
   </thead>
   <tbody>
-      @for(int i = 0; i < Results.Count; i++)
+      @for(int i = 0; i < CurrentResults.Results.Count; i++)
       {
-            var it = Results[i];
+            var it = CurrentResults.Results[i];
             string resultStr = "";
             switch (it.LR){
                 case Lookups.ListenResult.Matched:
@@ -41,8 +41,18 @@
                 <th scope="row">@(it.TestDef.SeqNumber + 1)</th>
                 <td>@resultStr</td>
                 <td>@it.Tries</td>
+                <td>@(_musicEngine.ScoreTest(it))</td>
+            </tr>
+
+      }
+      @if(CurrentResults.Results.Count > 0){
+            <tr>
+                <th scope="row"></th>
                 <td></td>
+                <td></td>
+                <td>@(_musicEngine.CalculateScore(CurrentResults))%</td>
             </tr>
       }
+
   </tbody>
 </table>

@@ -17,6 +17,7 @@ class PitchDetect {
     same = 0;
     currentNote = 0;
     lock = false;
+    once = true;
 
 
     constructor(cb: (note: number) => void) {
@@ -104,7 +105,12 @@ class PitchDetect {
 
     private runDetect() {
         var that = this;
-        that.analyser.getFloatTimeDomainData(this.buffer);
+        that.analyser.getFloatTimeDomainData(that.buffer);
+        if (that.once) {
+       //     console.log(that.buffer);
+         //   console.log(that.audioContext.sampleRate);
+            that.once = false;
+        }
         var ac = that.autoCorrelate(that.buffer, that.audioContext.sampleRate);
         var note = that.noteFromPitch(ac);
         that.processNote(note);

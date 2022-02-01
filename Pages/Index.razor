@@ -3,7 +3,9 @@
 @using System.Globalization
 <PageTitle>Welcome</PageTitle>
 
-
+<HxButton Text="poop" OnClick="play"/>
 @code{
-
+    void play() {
+        Util.JS.InvokeVoidAsync("window.playPianoSeq");
+    }
 }

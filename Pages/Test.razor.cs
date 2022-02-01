@@ -43,7 +43,7 @@ namespace EarWorm.Pages {
                
                 var tries = 0;
                 for (tries =0; tries < test.Numtries; tries++) {
-                    PlayNotes(test.Notes);
+                    _musicEngine.PlayNotes(test.Notes);
                     test.UsedTries = tries + 1;
                     await Task.Delay(test.Notes.Count * 1000);
                   //  _listening = true;
@@ -80,16 +80,12 @@ namespace EarWorm.Pages {
             _musicEngine.EndSet();
          }
 
-        private IList<TestResult> Results {
+        private TestSetResult CurrentResults {
             get {
                 return _musicEngine.CurrentSetResults;
             }
         }
-        private async void PlayNotes(IList<int> notes) {
-            // we want 'real' note names
-            var nlist = notes.Select(note => _musicEngine.GetAbsNoteName(note, false));
-            await Util.JS.InvokeVoidAsync("window.playSeq", nlist.ToList());
-        }
+
     }
 
 }

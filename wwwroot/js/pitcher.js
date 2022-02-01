@@ -9,6 +9,7 @@ class PitchDetect {
         this.same = 0;
         this.currentNote = 0;
         this.lock = false;
+        this.once = true;
         this.cb = cb;
         this.buffer = new Float32Array(2048);
     }
@@ -88,7 +89,12 @@ class PitchDetect {
     }
     runDetect() {
         var that = this;
-        that.analyser.getFloatTimeDomainData(this.buffer);
+        that.analyser.getFloatTimeDomainData(that.buffer);
+        if (that.once) {
+            //     console.log(that.buffer);
+            //   console.log(that.audioContext.sampleRate);
+            that.once = false;
+        }
         var ac = that.autoCorrelate(that.buffer, that.audioContext.sampleRate);
         var note = that.noteFromPitch(ac);
         that.processNote(note);

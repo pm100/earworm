@@ -26,3 +26,21 @@ window.playChord = (notes, interval) => {
     synth.triggerRelease(notes, now + 1);
 };
 
+window.playPianoSeq = (notes, interval) => {
+    console.log("piano");
+    const sampler = new Tone.Sampler({
+        urls: {
+            "C4": "assets/C4.mp3",
+            "D4": "assets/D4.mp3",
+            "F4": "assets/F4.mp3",
+            "A4": "assets/A4.mp3",
+        },
+        release: 1
+      //  baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination();
+
+    Tone.loaded().then(() => {
+        sampler.triggerAttackRelease(["Eb4", "G4", "Bb4"], 4);
+    })
+}
+

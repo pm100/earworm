@@ -67,7 +67,7 @@ window.allowSleep = () => {
         };
 
 
-window.playSeq = (notes, interval) => {
+window.playToneSeq = (notes, interval) => {
     Tone.start();
     const synth = new Tone.Synth().toDestination();
     const now = Tone.now();
@@ -91,3 +91,27 @@ window.playChord = (notes, interval) => {
     synth.triggerRelease(notes, now + 1);
 };
 
+window.playSeq = (notes, interval) => {
+    console.log("piano");
+    const sampler = window.toneSampler || new Tone.Sampler({
+        urls: {
+            "C4": "assets/C4v10.mp3",
+            "D#4": "assets/Ds4v10.mp3",
+            "F#4": "assets/Fs4v10.mp3",
+            "A4": "assets/A4v10.mp3",
+        },
+        release: 1
+        //  baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination();
+    const now = Tone.now();
+    var offset = 0;
+    Tone.loaded().then(() => {
+        notes.forEach(note => {
+            sampler.triggerAttack(note, now + offset);
+            offset = offset + 0.5;
+            sampler.triggerRelease(now + offset);
+            offset = offset + 0.5;
+
+        })
+    })
+}

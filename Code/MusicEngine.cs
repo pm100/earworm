@@ -1,4 +1,5 @@
-﻿namespace EarWorm.Code {
+﻿using Microsoft.JSInterop;
+namespace EarWorm.Code {
 
     public class MusicEngine {
 
@@ -69,12 +70,36 @@
             var inst = _settings.InstrumentKey;
             return Lookups.Instruments[inst];
         }
-        public void UpdateInstrument(string key) {
+        public void UpdateInstrument(Lookups.InstrumentTags key) {
             _saver.Settings.InstrumentKey = key;
             _saver.SaveSettings();
         }
 
+        public int ScoreTest(TestResult r) {
 
+            if (r.LR == Lookups.ListenResult.Matched) {
+                return 100 / r.Tries;
+            }
+            else return 0;
+        }
+        public int CalculateScore(TestSetResult resultSet) {
+
+            var total = 0;
+            if (resultSet.Results.Count == 0) {
+                return 0;
+            }
+
+            foreach (var t in resultSet.Results) {
+                var tscore = ScoreTest(t);
+                total += tscore;
+            }
+            total /= resultSet.Results.Count;
+            return total;
+
+
+
+
+        }
         public IEnumerable<TestDefinition> GetNextTest() {
             
             foreach (var td in _generator.GetNextTest()) {
@@ -88,7 +113,7 @@
 
       //  List<TestResult> _results;
         public async void ReportTestResult(TestResult result) {
-            CurrentSetResults.Add(result);
+            CurrentSetResults.Results.Add(result);
             _saver.CurrentResults.SetDefinition = _currentSet;
             await _saver.SaveCurrentResults();
         }
@@ -97,10 +122,21 @@
             _saver.WriteResult();
         }
 
-        public List<TestResult> CurrentSetResults {
+        public TestSetResult CurrentSetResults {
             get {
-                return _saver.CurrentResults.Results;
+                return _saver.CurrentResults;
             }
+        }
+
+        public async void PlayNotes(IList<int> notes) {
+            // we want 'real' note names
+            var nlist = notes.Select(note => GetAbsNoteName(note, false));
+            string func = "";
+            if (_saver.Settings.ToneGenerator == Lookups.ToneGenerator.Beep)
+                func = "window.playToneSeq";
+            else
+                func = "window.playSeq";
+            await Util.JS.InvokeVoidAsync(func, nlist.ToList());
         }
     }
 }

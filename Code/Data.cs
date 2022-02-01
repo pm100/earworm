@@ -9,7 +9,10 @@
             PlayTriad,// play triad
             Silent // nothing
         }
-
+        public enum ToneGenerator {
+            Beep,
+            Piano
+        }
         public enum ListenResult {
             Matched, // passed the test
             Failed, // wrong note played
@@ -19,14 +22,65 @@
             Stop,
             Init
         }
-
-        static readonly Dictionary<string, Instrument> _instruments = new()
+        public enum InstrumentTags {
+            Piano,
+            Guitar,
+            Bass,
+            SopranoSax,
+            AltoSax,
+            TenorSax,
+            SopranoVoice,
+            AltoVoice,
+            TenorVoice
+        }
+        static readonly Dictionary<InstrumentTags, Instrument> _instruments = new()
         {
-            { "P", new Instrument { Key = "P", Name = "Piano", NoteOffset = 0, Clef=Clef.Treble } },
-            { "G", new Instrument { Key = "G", Name = "Guitar", NoteOffset = 12, Clef = Clef.Treble } },
-            { "B", new Instrument { Key = "B", Name = "Bass", NoteOffset = 12, Clef = Clef.Bass } },
+            {
+                InstrumentTags.Piano,
+                new Instrument {
+                    Key = InstrumentTags.Piano,
+                    Name = "Piano",
+                    NoteOffset = 0,
+                    Clef = Clef.Treble,
+                    RangeLow = 60,      // c4 (middle c)
+                    RangeHigh = 72      // c5
+                }
+            },
+            {
+                InstrumentTags.Guitar,
+                new Instrument {
+                    Key = InstrumentTags.Guitar,
+                    Name = "Guitar",
+                    NoteOffset = 12,
+                    Clef = Clef.Treble,
+                    RangeLow = 48,     // c3  
+                    RangeHigh = 60,    // c4
+                }
+            },
+            {
+                InstrumentTags.Bass,
+                new Instrument {
+                    Key = InstrumentTags.Bass,
+                    Name = "Bass",
+                    NoteOffset = 12,
+                    Clef = Clef.Bass,
+                    RangeLow = 36,     // c2
+                    RangeHigh = 48,    // c4
+                }
+
+            },
+            {
+                InstrumentTags.AltoSax,
+                new Instrument {
+                    Key = InstrumentTags.AltoSax,
+                    Name = "Alto Sax",
+                    NoteOffset = 9,
+                    RangeLow = 60 - 9,
+                    RangeHigh = 72 - 9
+                }
+            }
         };
-        public static Dictionary<string, Instrument> Instruments => _instruments;
+        public static Dictionary<InstrumentTags, Instrument> Instruments => _instruments;
 
         static readonly String[] _noteNames = new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
         public static String[] NoteNames => _noteNames;
@@ -160,21 +214,22 @@
         public static SettingsData DefaultSettings {
             get {
                 return new SettingsData {
-                    InstrumentKey = "P",
+                    InstrumentKey = Lookups.InstrumentTags.Piano,
                     NoSleep = true,
                     Version = 1,
-                    KeySig = true
+                    KeySig = true,
+                    ToneGenerator = Lookups.ToneGenerator.Piano
                 };
             }
         }
     }
     // records
     public record Instrument {
-        public string Key { get; set; }
+        public Lookups.InstrumentTags Key { get; set; }
         public string Name { get; set; }
         public int NoteOffset { get; set; }// /transpositon + means instrument tx down, - means tx up
-        public Lookups.Clef Clef { get; set; }  
-        public int RangeLow { get; set; }     
+        public Lookups.Clef Clef { get; set; }
+        public int RangeLow { get; set; }
         public int RangeHigh { get; set; }
     };
     // represents one test to be presented to the user
@@ -190,7 +245,7 @@
     };
 
     public record TestResult {
-       // public int Number { get; set; }
+        // public int Number { get; set; }
         public Lookups.ListenResult LR { get; set; }
         public int Tries { get; set; }
         public int FailedNote { get; set; }
@@ -222,10 +277,11 @@
 
     // persistent data
     public record SettingsData {
-        public string InstrumentKey { get; set; }
+        public Lookups.InstrumentTags InstrumentKey { get; set; }
         public bool NoSleep { get; set; }
         public bool KeySig { get; set; }
         public int Version { get; set; }
+        public Lookups.ToneGenerator ToneGenerator {get;set; }
     };
 
 
@@ -236,11 +292,11 @@
 
     public record TestSetResult {
         public List<TestResult> Results { get; set; }
-        public SetDef SetDefinition { get; set; }   
+        public SetDef SetDefinition { get; set; }
         public DateTime DateTime { get; set; }
     }
     public record ResultsDB {
-        public TestSetResult Current { get; set; }
+    
         public List<TestSetResult> Results { get; set; }
     }
 }
