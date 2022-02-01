@@ -1,11 +1,43 @@
 ﻿@page "/"
 @using EarWorm.Code
-@using System.Globalization
+
+@inject MusicEngine _musicEngine
+@inject SavedData _saver;
 <PageTitle>Welcome</PageTitle>
 
-<HxButton Text="poop" OnClick="play"/>
+<div>your progress</div>
+@if (@ShowResultTable) {
+    <table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Description</th>
+      <th scope="col">Tests</th>
+      <th scope="col">Score</th>
+    </tr>
+  </thead>
+  <tbody>
+      @for(int i = 0; i < ResultsDB.Results.Count; i++)
+      {
+            var it = ResultsDB.Results[i];
+            <tr>
+                <th scope="row">@(it.DateTime)</th>
+                <td>@it.SetDefinition.Description</td>
+                <td>@it.Results.Count</td>
+                <td>@(_musicEngine.CalculateScore(it))</td>
+            </tr>
+
+      }
+
+
+  </tbody>
+</table>
+}
 @code{
-    void play() {
-        Util.JS.InvokeVoidAsync("window.playPianoSeq");
+    public bool ShowResultTable {
+        get{
+            return _saver.ResultsDB.Results.Count > 0;
+        }
     }
+    public ResultsDB ResultsDB => _saver.ResultsDB;
 }

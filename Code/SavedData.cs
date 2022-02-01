@@ -10,12 +10,13 @@ namespace EarWorm.Code {
         private SettingsData _settingsData;
         private SetDefData _setDefData;
         TestSetResult _currentResults;
-
+        ResultsDB _resultsDB;
         public async Task Boot() {
             Util.Log("boot settings");
             await LoadSettings();
             await LoadSetDefs();
             await LoadTestResults();
+            await LoadResultDB();   
         }
         async Task LoadSettings() {
             var json = await Util.ReadStorage(SETTINGS_KEY);
@@ -75,24 +76,25 @@ namespace EarWorm.Code {
         }
 
         public TestSetResult CurrentResults => _currentResults;
+        public ResultsDB ResultsDB => _resultsDB;
+        internal async Task LoadResultDB() {
+            var json = await Util.ReadStorage(RESULTS_HISTORY_KEY);
+            if (json == null) {
+                _resultsDB = new ResultsDB {
+                    Results = new()
+                };
+            }
+            else {
+                _resultsDB = JsonSerializer.Deserialize<ResultsDB>(json);
+            }
+        }
 
         internal async void WriteResult() {
             // save current result to DB
 
             //var json = JsonSerializer.Serialize(_currentResults);
-            ResultsDB db;
-            var json = await Util.ReadStorage(RESULTS_HISTORY_KEY);
-            if (json == null) {
-                db = new ResultsDB {
-                    Results = new()
-                };
-            }
-            else {
-                db = JsonSerializer.Deserialize<ResultsDB>(json);
-
-            }
-            db.Results.Add(CurrentResults);
-            json = JsonSerializer.Serialize(db);    
+            _resultsDB.Results.Add(CurrentResults);
+            var json = JsonSerializer.Serialize(_resultsDB);    
             await Util.WriteStorage(RESULTS_HISTORY_KEY, json);
 
 
