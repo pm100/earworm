@@ -1,15 +1,12 @@
 ﻿namespace EarWorm.Code {
     public class SetGenerator {
-
-
-
         SetDef _setdef;
         int _testCount;
         Random _rng = new (Guid.NewGuid().GetHashCode());
-        public SetGenerator(SetDef setDef, int startAt) {
-            Util.Log($"sd={setDef}");
+
+        public void Init(SetDef setDef) {
             _setdef = setDef;
-            _testCount = startAt;
+            _testCount = 0;
         }
         public IEnumerable<TestDefinition> GetNextTest() {
             switch (_setdef.Style) {
@@ -17,7 +14,9 @@
                         for (; _testCount < _setdef.TestCount; _testCount++) {
                             var notes = ScaleNotes();
                             var td = new TestDefinition {
-                                Notes = notes,
+                                Notes = notes.Select(x=>x.Item2).ToList(),
+                                RelNotes = notes.Select(x => x.Item1).ToList(),
+
                                 Numtries = _setdef.Retries,
                                 TimeOut = notes.Count * _setdef.TimeAllowed,
                                 Key = _setdef.Key,
@@ -35,7 +34,7 @@
             }
 
         }
-        List<int> ScaleNotes() {
+        List<(int,int)> ScaleNotes() {
             Util.Log($"sds={_setdef}");
             var noteCount = _setdef.NoteCount;
             var ret = new List<int>(_setdef.NoteCount);
@@ -58,7 +57,7 @@
                     break;
                 }
             }
-            return ret.Select(n => RelToAbs(n)).ToList();
+            return ret.Select(n => (n, RelToAbs(n))).ToList();
         }
 
         int RelToAbs(int relNote) {

@@ -236,7 +236,8 @@
     public record TestDefinition {
         public int Numtries { get; set; }
         public int Difficulty { get; set; }
-        public IList<int> Notes { get; set; }
+        public List<int> Notes { get; set; }
+        public List<int> RelNotes { get; set; }
         public Lookups.RootMode RootMode { get; set; }
         public int SeqNumber { get; set; }
         public int UsedTries { get; set; }

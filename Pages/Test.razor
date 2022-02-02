@@ -38,7 +38,7 @@
                     break;
             }
             <tr>
-                <th scope="row">@(it.TestDef.SeqNumber + 1)</th>
+                <th scope="row">@($"{it.TestDef.SeqNumber + 1}/{CurrentResults.SetDefinition.TestCount}")</th>
                 <td>@resultStr</td>
                 <td>@it.Tries</td>
                 <td>@(_musicEngine.ScoreTest(it))</td>

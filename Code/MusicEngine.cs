@@ -3,47 +3,40 @@ namespace EarWorm.Code {
 
     public class MusicEngine {
 
-
         SetDef _currentSet = null;
         SetGenerator _generator;
         TestDefinition _currentTest;
         SavedData _saver;
-       // TestSetResult _currentResultSet;
         SettingsData _settings;
+        int _testIdx;
+
         public enum State {
             Fresh,
             InSet,
             ForcedClear
         }
-        int _testIdx;
         public SetDef CurrentSet { get { return _currentSet; } }
 
         public MusicEngine(SavedData saver) {
             _saver = saver;
-           // _results = new List<TestResult>();
             _settings = _saver.Settings;
-           // _currentResultSet = new TestSetResult {
-           //     Results = _results,
-           //     DateTime = DateTime.Now
-           // };
             _testIdx = 0;
+            _generator = new SetGenerator();
         }
         public State Init(SetDef def) {
             var ret = State.Fresh;
             if (def != _currentSet) {
                 ret =  State.ForcedClear;
-             
             }
             else if (_testIdx > 0) {
                 ret = State.InSet;  
             }
             if (ret != State.InSet) {
                 _currentSet = def with { };
-                _generator = new SetGenerator(def, _testIdx);
+                _generator.Init(def);
                 Clear();
             }
             return ret;
- 
         }
         public void Clear() {
             _testIdx = 0;
@@ -66,7 +59,6 @@ namespace EarWorm.Code {
 
         }
         public Instrument GetCurrentInstrument() {
-           
             var inst = _settings.InstrumentKey;
             return Lookups.Instruments[inst];
         }
@@ -111,7 +103,6 @@ namespace EarWorm.Code {
             _testIdx = 0;
         }
 
-      //  List<TestResult> _results;
         public async void ReportTestResult(TestResult result) {
             CurrentSetResults.Results.Add(result);
             _saver.CurrentResults.SetDefinition = _currentSet;
