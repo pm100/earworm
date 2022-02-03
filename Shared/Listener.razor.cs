@@ -84,7 +84,7 @@ namespace EarWorm.Shared {
                 LR = Lookups.ListenResult.Abandoned
             };
             var keyStr = _saver.Settings.KeySig ?
-                Lookups.KeyTable[_testDef.Key].Name : "C";
+                Lookups.KeyTable[_musicEngine.GetCurrentKey()].Name : "C";
             var inst = _musicEngine.GetCurrentInstrument();
             _staffDef = new Staff { Clef = inst.Clef.ToString().ToLower(), Key=keyStr };
             _resultIcon = null;
@@ -102,7 +102,8 @@ namespace EarWorm.Shared {
             var absNoteStr = _musicEngine.GetAbsNoteName(n, true);
 
             // note name for display on staff
-            var relNoteStr = _musicEngine.GetNoteName(n, true, _testDef.Key);
+            var relNoteStr = _musicEngine.GetNoteName(n, true, _saver.Settings.KeySig ?
+                _musicEngine.GetCurrentKey() : Lookups.Key.C);
 
             var newNote = new StaffNote();
             _staffDef.Notes.Add(newNote);

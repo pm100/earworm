@@ -177,7 +177,7 @@
             { Key.C, new KeyDef(Key.C, "C", 24, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
             { Key.CSharp, new KeyDef(Key.CSharp, "C#", 25, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
             { Key.DFlat, new KeyDef(Key.DFlat, "Db", 25, new string[] { "C@", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
-            { Key.D, new KeyDef(Key.D, "D", 26, new string[] { "C@", "C", "D", "D#", "E", "F@", "F#", "G", "G#", "A", "A#", "B" }) },
+            { Key.D, new KeyDef(Key.D, "D", 26, new string[] { "C@", "C", "D", "D#", "E", "F@", "F", "G", "G#", "A", "A#", "B" }) },
             { Key.DSharp, new KeyDef(Key.DSharp, "D#", 27, new string[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" }) },
             { Key.EFlat, new KeyDef(Key.EFlat, "Eb", 27, new string[] { "C", "Db", "D", "E", "E@", "F", "Gb", "G", "A", "A@", "Bb", "B@" }) },
             { Key.E, new KeyDef(Key.E, "E", 28, new string[] { "C@", "C#", "D@", "D#", "E", "F@", "F#", "G@", "G#", "A", "A#", "B" }) },
@@ -190,6 +190,21 @@
         };
         public static Dictionary<Key, KeyDef> KeyTable => _keyTable;
         public static List<(Key, string)> KeyNames => _keyTable.Select(kv => (kv.Key, kv.Value.Name)).ToList();
+
+        public static Key[] CycleKeys = new Key[12] {
+            Key.C,
+            Key.G,
+            Key.D,
+            Key.A,
+            Key.E,
+            Key.B,
+            Key.FSharp,
+            Key.DFlat,
+            Key.AFlat,
+            Key.EFlat,
+            Key.BFlat,
+            Key.F
+        };
 
     }
 

@@ -118,7 +118,15 @@ namespace EarWorm.Code {
                 return _saver.CurrentResults;
             }
         }
-
+        public Lookups.Key GetCurrentKey() {
+            if (_currentSet.Style == Lookups.Style.ScaleRandom) {
+                return _currentSet.Key;
+            }
+            if(_currentSet.Style == Lookups.Style.CycleOfFifthsRandom) {
+                return _generator.GetCurrentKey();
+            }
+            return Lookups.Key.C; // !
+        }
         public async void PlayNotes(IList<int> notes) {
             // we want 'real' note names
             var nlist = notes.Select(note => GetAbsNoteName(note, false));
@@ -127,7 +135,7 @@ namespace EarWorm.Code {
                 func = "window.playToneSeq";
             else
                 func = "window.playSeq";
-            await Util.JS.InvokeVoidAsync(func, nlist.ToList());
+            await Util.JS.InvokeVoidAsync(func, nlist.ToList(), 1);
         }
     }
 }

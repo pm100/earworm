@@ -66,5 +66,21 @@ namespace EarWorm.Pages {
         public void OnRootChanged(int sel) {
             _currentSet.RootMode = (Lookups.RootMode)sel;
         }
+
+        public static IList<string> TestTypes {
+            get {
+
+                var t = new string[] {
+                    "Random from one scale",
+                    "Melody samples",
+                    "Random notes moving thru cycle",
+                };
+                return t;
+            }
+        }
+        public int SelectedTestType => (int)_currentSet.Style;
+        public void OnTestTypeChanged(int sel) {
+            _currentSet.Style = (Lookups.Style)sel;
+        }
     }
 }

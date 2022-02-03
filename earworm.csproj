@@ -12,14 +12,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="mp3p\**" />
     <Compile Remove="wwwroot\lib\**" />
     <Compile Remove="wwwroot\sample-data\**" />
+    <Content Remove="mp3p\**" />
     <Content Remove="wwwroot\lib\**" />
     <Content Remove="wwwroot\sample-data\**" />
+    <EmbeddedResource Remove="mp3p\**" />
     <EmbeddedResource Remove="wwwroot\lib\**" />
     <EmbeddedResource Remove="wwwroot\sample-data\**" />
+    <None Remove="mp3p\**" />
     <None Remove="wwwroot\lib\**" />
     <None Remove="wwwroot\sample-data\**" />
+    <TypeScriptCompile Remove="mp3p\**" />
     <TypeScriptCompile Remove="wwwroot\lib\**" />
   </ItemGroup>
 
@@ -35,6 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="src\index.js" />
     <None Remove="src\pitch.ts" />
   </ItemGroup>
 
