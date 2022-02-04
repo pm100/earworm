@@ -206,6 +206,7 @@
             Key.F
         };
 
+
     }
 
     public static class Defaults {
@@ -275,16 +276,38 @@
         public Lookups.Key Key { get; set; }
         public Lookups.Scale Scale { get; set; }
         public int TestCount { get; set; }
+        public int TotalTests() {
+                switch (Style) {
+                    case Lookups.Style.ScaleRandom: {
+                            return TestCount;
+                        }
+                    case Lookups.Style.CycleOfFifthsRandom: {
+                            return TestCount * 12;
+                        }
+                    default: return TestCount;
+                }
+
+            }
         public int NoteCount { get; set; }
         public Lookups.RootMode RootMode { get; set; }
         public int RangeStart { get; set; }
         public int RangeEnd { get; set; }
-        public string Description {
-            get {
-                var key = Lookups.KeyNames.Find(x => x.Item1 == Key).Item2;
-                var scale = Lookups.ScaleNames.Find(x => x.Item1 == Scale).Item2;
-                return $"Basic Scale, {key} {scale} ";
+        public string Description() {
+            switch (Style) {
+                case Lookups.Style.ScaleRandom: {
+                        var key = Lookups.KeyNames.Find(x => x.Item1 == Key).Item2;
+                        var scale = Lookups.ScaleNames.Find(x => x.Item1 == Scale).Item2;
+                        return $"Basic Scale, {key} {scale} ";
+                    }
+                case Lookups.Style.CycleOfFifthsRandom: {
+                        var key = Lookups.KeyNames.Find(x => x.Item1 == Key).Item2;
+                        var scale = Lookups.ScaleNames.Find(x => x.Item1 == Scale).Item2;
+                        return $"Fifths Cycle, Starting {key} {scale} ";
+                    }
+                default: return "";
             }
+
+
         }
         public int Retries { get; set; }
         public int TimeAllowed { get; set; }

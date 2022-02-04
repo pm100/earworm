@@ -22,7 +22,7 @@
             var it = ResultsDB.Results[i];
             <tr>
                 <th scope="row">@(it.DateTime)</th>
-                <td>@it.SetDefinition.Description</td>
+                <td>@it.SetDefinition.Description()</td>
                 <td>@it.Results.Count</td>
                 <td>@(_musicEngine.CalculateScore(it))</td>
             </tr>

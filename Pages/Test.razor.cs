@@ -14,7 +14,7 @@ namespace EarWorm.Pages {
         protected override void OnInitialized() {
             _initState = _musicEngine.Init(_saver.CurrentSet);
         }
-        String SetDescription => _musicEngine.CurrentSet.Description;
+        String SetDescription => _musicEngine.CurrentSet.Description();
         private string StartButtonText {
             get {
                 return _initState == MusicEngine.State.InSet ? "Restart" : "Start";
