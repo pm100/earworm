@@ -77,9 +77,10 @@ window.playSeq = async (notes, interval) => {
         await Tone.loaded()
     }
     const now = Tone.now();
+    console.log(now);
     var offset = 0;
     notes.forEach(note => {
-        window.toneSampler.triggerAttackRelease(note, 0.85, now + offset);
+        window.toneSampler.triggerAttackRelease(note, 0.85, now + offset, 0.5);
         offset = offset + interval;
     });
 }

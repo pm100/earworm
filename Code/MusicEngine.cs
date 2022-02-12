@@ -22,6 +22,7 @@ namespace EarWorm.Code {
             _settings = _saver.Settings;
             _testIdx = 0;
             _generator = new SetGenerator();
+            Init(_saver.CurrentSet);
         }
         public State Init(SetDef def) {
             var ret = State.Fresh;

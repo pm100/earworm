@@ -1,30 +1,30 @@
 ﻿
-<HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown" 
-		Centered="true"
-		ShowCloseButton="false">
-	<BodyTemplate>
-		@if(_mode==Mode.Test){
-		<div>Try @(_testDef.UsedTries) / @_testDef.Numtries</div>
-		}
-		<div>
-			I heard: @_notes
-		</div>
-		<div id="vf"></div>
-		
-		@if(_resultIcon != null){
-			<HxIcon Icon = "@_resultIcon" CssClass = "display-3" />
-		}
-		<HxProgress>
-    <HxProgressBar Label="" MaxValue=@Max Value=@Time />
-</HxProgress>
+<HxModal @ref="_modal" Title="Listening" OnClosed="Closed" OnShown="Shown"
+         Centered="true"
+         ShowCloseButton="false">
+    <BodyTemplate>
+        @if (_mode == Mode.Test) {
+            <div>Try @(_testDef.UsedTries) / @_testDef.Numtries</div>
+        }
+        <div>
+            I heard: @_notes
+        </div>
+        <div id="vf"></div>
 
-	</BodyTemplate>
-	<FooterTemplate>
-		<HxButton Text="Stop" OnClick="HandleStop" Color="ThemeColor.Primary" />
-		@if(_mode == Mode.Test){
-		<HxButton Text="Skip" OnClick="HandleSkip" Color="ThemeColor.Primary" />
-		}
-	</FooterTemplate>
+        @if (_resultIcon != null) {
+            <HxIcon Icon="@_resultIcon" CssClass="display-3" />
+        }
+        <HxProgress>
+            <HxProgressBar Label="" MaxValue=@Max Value=@Time />
+        </HxProgress>
+
+    </BodyTemplate>
+    <FooterTemplate>
+        <HxButton Text="Stop" OnClick="HandleStop" Color="ThemeColor.Primary" />
+        @if (_mode == Mode.Test) {
+            <HxButton Text="Skip" OnClick="HandleSkip" Color="ThemeColor.Primary" />
+        }
+    </FooterTemplate>
 </HxModal>
 
 @using Microsoft.JSInterop

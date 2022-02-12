@@ -8,42 +8,39 @@
 <div class="container">
     <div class="row px-3">
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-            <HxInputNumber  @bind-Value="SetSize" Label="Number of tests in set"/>
+            <HxInputNumber @bind-Value="SetSize" Label="Number of tests in set" />
         </div>
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-            <HxInputNumber  @bind-Value="Retries" Label="Retries allowed"/>
-        </div>
-    </div>
-        <div class="row px-3">
-        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-            <HxInputNumber  @bind-Value="NotesInTest" Label="Number of notes in test"/>
-        </div>
-      <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-            <HxInputNumber  @bind-Value="TimeAllowed" Label="Time allowed"/>
+            <HxInputNumber @bind-Value="Retries" Label="Retries allowed" />
         </div>
     </div>
     <div class="row px-3">
-                <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-
-<DropDown Label="Scale" Items=@ScaleItems ButtonText="Scale" Selected=@SelectedScale
-OnSelectionChange=@ScaleChanged/>
-    </div>
-
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-
-<DropDown Label="Key" Items=@KeyItems ButtonText="Key" Selected=@SelectedKey
-OnSelectionChange=@KeyChanged/>
+            <HxInputNumber @bind-Value="NotesInTest" Label="Number of notes in test" />
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            <HxInputNumber @bind-Value="TimeAllowed" Label="Time allowed" />
+        </div>
     </div>
-       </div>
     <div class="row px-3">
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-<DropDown Label="Root Note" Items=@RootModes ButtonText="Root" Selected=@SelectedRootMode
-    OnSelectionChange=@OnRootChanged/>
-    </div>
-            <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-<DropDown Label="Test  Type" Items=@TestTypes ButtonText="" Selected=@SelectedTestType
-    OnSelectionChange=@OnTestTypeChanged/>
-    </div>
+            <DropDown Label="Scale" Items=@ScaleItems ButtonText="Scale" Selected=@SelectedScale
+                      OnSelectionChange=@ScaleChanged />
+        </div>
 
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            <DropDown Label="Key" Items=@KeyItems ButtonText="Key" Selected=@SelectedKey
+                      OnSelectionChange=@KeyChanged />
+        </div>
     </div>
-</div> 
+    <div class="row px-3">
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            <DropDown Label="Root Note" Items=@RootModes ButtonText="Root" Selected=@SelectedRootMode
+                      OnSelectionChange=@OnRootChanged />
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            <DropDown Label="Test  Type" Items=@TestTypes ButtonText="" Selected=@SelectedTestType
+                      OnSelectionChange=@OnTestTypeChanged />
+        </div>
+    </div>
+</div>

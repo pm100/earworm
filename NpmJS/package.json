@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@audio-samples/piano-mp3-velocity10": "^1.0.5",
+    "@types/audioworklet": "^0.0.23",
     "nosleep.js": "^0.12.0",
     "tone": "^14.7.77",
     "vexflow": "^3.0.9"

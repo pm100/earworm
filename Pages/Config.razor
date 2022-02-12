@@ -10,27 +10,31 @@
 <PageTitle>Configure</PageTitle>
 
 <div class="container">
-        <div class="row px-3">
+    <div class="row px-3">
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-<DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
-OnSelectionChange=@InstrumentChanged/>
+            <DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
+                      OnSelectionChange=@InstrumentChanged />
 
-<Listener @ref=_listener/>
-<HxButton Text="Test Audio" OnClick="TestAudio" Color="ThemeColor.Primary"/>
-</div>
-</div>
-        <div class="row px-3">
+            <Listener @ref=_listener />
+            <HxButton Text="Test Audio" OnClick="TestAudio" Color="ThemeColor.Primary" />
+        </div>
+    </div>
+    <div class="row px-3">
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
 
-<HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
+            <HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
 
-<HxInputCheckbox @bind-Value="KeySig" Label="Show real key signature"/>
+            <HxInputCheckbox @bind-Value="KeySig" Label="Show real key signature" />
 
-</div>
-</div>
+        </div>
+    </div>
 
+    <div class="row px-3">
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
 
-<DropDown Label="Tone Generator" Items=@Toners Selected=@SelectedToner OnSelectionChange=@TonerChanged/>
+            <DropDown Label="Tone Generator" Items=@Toners Selected=@SelectedToner OnSelectionChange=@TonerChanged />
+        </div>
+    </div>
 
 
 

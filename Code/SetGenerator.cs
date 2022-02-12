@@ -15,35 +15,13 @@
             switch (_setdef.Style) {
                 case Lookups.Style.ScaleRandom: {
                         for (; _testCount < _setdef.TestCount; _testCount++) {
-                            //var notes = ScaleNotes(_setdef.NoteCount, _setdef.Key);
-                            //var td = new TestDefinition {
-                            //    Notes = notes.Select(x => x.Item2).ToList(),
-                            //    RelNotes = notes.Select(x => x.Item1).ToList(),
-                            //    Numtries = _setdef.Retries,
-                            //    TimeOut = notes.Count * _setdef.TimeAllowed,
-                            //    Key = _setdef.Key,
-                            //    SeqNumber = _testCount
-
-                            //};
-
                             yield return ScaleTD(_setdef.NoteCount, _setdef.Key);
                         }
                         yield break;
                     }
                 case Lookups.Style.CycleOfFifthsRandom: {
-                        for (; _testCount < _setdef.TestCount * Lookups.CycleKeys.Length; ) {
+                        for (; _testCount < _setdef.TestCount * Lookups.CycleKeys.Length;) {
                             for (int i = 0; i < _setdef.TestCount; i++) {
-                               
-                                //var notes = ScaleNotes(_setdef.NoteCount, Lookups.CycleKeys[_cycleCurrentKey]);
-                                //var td = new TestDefinition {
-                                //    Notes = notes.Select(x => x.Item2).ToList(),
-                                //    RelNotes = notes.Select(x => x.Item1).ToList(),
-                                //    Numtries = _setdef.Retries,
-                                //    TimeOut = notes.Count * _setdef.TimeAllowed,
-                                //    Key = _setdef.Key,
-                                //    SeqNumber = _testCount
-
-                                //};
                                 yield return ScaleTD(_setdef.NoteCount, Lookups.CycleKeys[_cycleCurrentKey]);
                                 _testCount++;
                             }
@@ -59,7 +37,7 @@
 
         }
 
-       TestDefinition ScaleTD(int noteCount, Lookups.Key key) {
+        TestDefinition ScaleTD(int noteCount, Lookups.Key key) {
             var notes = ScaleNotes(noteCount, key);
             var td = new TestDefinition {
                 Notes = notes.Select(x => x.Item2).ToList(),
@@ -71,12 +49,14 @@
 
             };
             return td;
-        
+
         }
 
         // produce n random notes in the key given. 
         // the scale to use is taken from _setDef
         // the range is also in _setdef
+
+        // returns the relative scale note and the actual note to play
         List<(int, int)> ScaleNotes(int noteCount, Lookups.Key key) {
             Util.Log($"key={key}");
             var ret = new List<int>(_setdef.NoteCount);
@@ -114,6 +94,9 @@
             var offset = Lookups.KeyTable[key].Base;
             var r = offset + relNote;
             var candidates = new List<int>();
+
+            // generate the note in all octaves in range
+
             for (int octave = 0; octave < 9; octave++) {
                 var candidate = r + (octave * 12);
                 if (candidate >= _setdef.RangeStart && candidate <= _setdef.RangeEnd) {
