@@ -63,7 +63,7 @@ namespace EarWorm.Shared {
             _testDef = testDef;
             Init(mode);
             await _modal.ShowAsync();
-            StartJSListener();
+            StartJSListener(6, 100, 0.2, 0.01);
             _startTime = DateTime.Now;
             return await _tcs.Task;
         }
@@ -151,8 +151,15 @@ namespace EarWorm.Shared {
             if (result != Lookups.ListenResult.Init)
                 Stop(result);
         }
-        private void StartJSListener() {
-            JS.InvokeVoidAsync("pitchStart", "earworm", "NoteHeard");
+        private void StartJSListener(int lockCount, int buffer, double thresh, double silence) {
+            // three params control sensitiy
+            // buff - size of listen buffer in 128 block samples
+            // low notes need a lot of samples
+            // thresh - is used to decide the beginning and end of relevant samples 
+            // lockCount - how many samples have to return the same not before we lock onto it
+            // silnse - rms threshold for decideing that a sample is silnt and thus should not be looked at
+
+            JS.InvokeVoidAsync("pitchStart", "earworm", "NoteHeard", buffer, silence, thresh, lockCount);
             //_listening = true;
         }
         private void StopJSListener() {

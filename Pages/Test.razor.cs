@@ -21,6 +21,8 @@ namespace EarWorm.Pages {
             }
         }
         private async void StartClick() {
+
+            
             _musicEngine.Clear();
             _running = !_running;
             if (_running)

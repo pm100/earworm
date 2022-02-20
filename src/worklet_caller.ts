@@ -1,23 +1,34 @@
-﻿class PitchDetectWorklet {
+﻿interface PitchDetectOptions {
+    buffersize?: number,
+    lockcont?: number,
+    silence?: number,
+    threshold?: number
+}
+
+class PitchDetectWorklet {
     audioContext!: AudioContext;
     running: boolean = false;
     pitchWorklet!: AudioWorkletNode;
     cb: (note: number) => void;
+    options: PitchDetectOptions;
 
-    constructor(cb: (note: number) => void) {
+    constructor(options: PitchDetectOptions, cb: (note: number) => void) {
         this.cb = cb;
+        this.options = options;
     }
-    private setParam(name: string, val: number) {
+    private setParam(name: string, dflt: number) {
         var param = this.pitchWorklet.parameters.get(name);
-        if (param)
+        if (param) {
+            const val = this.options[name as keyof PitchDetectOptions] || dflt;
             param.setValueAtTime(val, 0);
+        }
         else
             console.log("error setting " + name);
     }
     start = async () => {
         try {
             const AudioContextConstructor =
-                window.AudioContext || window.webkitAudioContext;
+                window.AudioContext //|| window.webkitAudioContext;
             this.audioContext = new AudioContextConstructor();
 
             await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');

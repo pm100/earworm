@@ -98,6 +98,7 @@ namespace EarWorm.Code {
             foreach (var td in _generator.GetNextTest()) {
                 _currentTest = td;
                 _testIdx++;
+
                 yield return _currentTest;
 
             }

@@ -1,22 +1,13 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 class PitchDetectWorklet {
-    constructor(cb) {
+    constructor(options, cb) {
         this.running = false;
-        this.start = () => __awaiter(this, void 0, void 0, function* () {
+        this.start = async () => {
             try {
-                const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+                const AudioContextConstructor = window.AudioContext; //|| window.webkitAudioContext;
                 this.audioContext = new AudioContextConstructor();
-                yield this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
-                var stream = yield navigator.mediaDevices.getUserMedia({ audio: true });
+                await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
+                var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 var mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
                 this.pitchWorklet = new AudioWorkletNode(this.audioContext, 'pitch-processor');
                 this.setParam('buffersize', 10);
@@ -32,7 +23,7 @@ class PitchDetectWorklet {
             catch (e) {
                 console.log(e);
             }
-        });
+        };
         this.stop = () => {
             if (this.running) {
                 this.audioContext.close();
@@ -40,11 +31,14 @@ class PitchDetectWorklet {
             }
         };
         this.cb = cb;
+        this.options = options;
     }
-    setParam(name, val) {
+    setParam(name, dflt) {
         var param = this.pitchWorklet.parameters.get(name);
-        if (param)
+        if (param) {
+            const val = this.options[name] || dflt;
             param.setValueAtTime(val, 0);
+        }
         else
             console.log("error setting " + name);
     }
