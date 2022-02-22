@@ -50,7 +50,7 @@ namespace EarWorm.Pages {
 
         public static IList<string> RootModes {
             get {
-
+              
                 var t = new string[] {
                     "Include Random Root",
                     "Include High Root",

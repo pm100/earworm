@@ -4,7 +4,7 @@ class PitchDetectWorklet {
         this.running = false;
         this.start = async () => {
             try {
-                const AudioContextConstructor = window.AudioContext; //|| window.webkitAudioContext;
+                const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
                 this.audioContext = new AudioContextConstructor();
                 await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
                 var stream = await navigator.mediaDevices.getUserMedia({ audio: true });

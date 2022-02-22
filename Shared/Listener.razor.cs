@@ -63,7 +63,7 @@ namespace EarWorm.Shared {
             _testDef = testDef;
             Init(mode);
             await _modal.ShowAsync();
-            StartJSListener(6, 100, 0.2, 0.01);
+            StartJSListener(5, 15, 0.2, 0.01);
             _startTime = DateTime.Now;
             return await _tcs.Task;
         }

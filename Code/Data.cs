@@ -75,8 +75,20 @@
                     Key = InstrumentTags.AltoSax,
                     Name = "Alto Sax",
                     NoteOffset = 9,
+                    Clef = Clef.Treble,
                     RangeLow = 60 - 9,
                     RangeHigh = 72 - 9
+                }
+            },
+            {
+                InstrumentTags.TenorSax,
+                new Instrument {
+                    Key = InstrumentTags.TenorSax,
+                    Name = "Tenor Sax",
+                    NoteOffset = 14,
+                    RangeLow = 60 - 14,
+                    Clef = Clef.Treble,
+                    RangeHigh = 72 - 14
                 }
             }
         };

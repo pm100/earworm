@@ -4,7 +4,9 @@
     silence?: number,
     threshold?: number
 }
-
+interface Window {
+    webkitAudioContext: typeof AudioContext
+}
 class PitchDetectWorklet {
     audioContext!: AudioContext;
     running: boolean = false;
@@ -28,7 +30,7 @@ class PitchDetectWorklet {
     start = async () => {
         try {
             const AudioContextConstructor =
-                window.AudioContext //|| window.webkitAudioContext;
+                window.AudioContext || window.webkitAudioContext;
             this.audioContext = new AudioContextConstructor();
 
             await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
