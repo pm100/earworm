@@ -23,7 +23,14 @@ namespace EarWorm.Code {
             if (json == null)
                 _settingsData = Defaults.DefaultSettings;
             else
-                _settingsData = JsonSerializer.Deserialize<SettingsData>(json);
+                try {
+                    _settingsData = JsonSerializer.Deserialize<SettingsData>(json);
+                }
+                catch  {
+                    Util.Log("Failed to load settings, using default");
+                    _settingsData = Defaults.DefaultSettings;
+                    SaveSettings(); 
+                }
             Util.Log(_settingsData.ToString());
         }
         async Task LoadSetDefs() {
@@ -31,7 +38,15 @@ namespace EarWorm.Code {
             if (json == null)
                 _setDefData = new SetDefData { Current = Defaults.DefaultSetDef };
             else
-                _setDefData = JsonSerializer.Deserialize<SetDefData>(json);
+                try {
+                    _setDefData = JsonSerializer.Deserialize<SetDefData>(json);
+                }
+                catch {
+                    Util.Log("Failed to load setdefs, using default");
+                    _setDefData = new SetDefData { Current = Defaults.DefaultSetDef };
+                    SaveSetDefs();
+
+                }
             Util.Log(_setDefData.ToString());
         }
         async Task LoadTestResults() {
@@ -42,7 +57,17 @@ namespace EarWorm.Code {
                 };
             }
             else {
-                _currentResults = JsonSerializer.Deserialize<TestSetResult>(json);
+                try {
+                    _currentResults = JsonSerializer.Deserialize<TestSetResult>(json);
+                }
+                catch {
+                    Util.Log("Failed to load result, using default");
+                    _currentResults = new TestSetResult {
+                        Results = new()
+                    };
+                    WriteResult();
+
+                }
             }
         }
         public async Task SaveCurrentResults() {

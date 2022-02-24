@@ -4,7 +4,11 @@
         int _testCount;
         int _cycleCurrentKey;
         int _cycleStart;
+        MusicEngine _musicEngine;
         Random _rng = new(Guid.NewGuid().GetHashCode());
+        public SetGenerator(MusicEngine me) {
+            _musicEngine = me;
+        }
 
         public void Init(SetDef setDef) {
             _setdef = setDef;
@@ -86,12 +90,26 @@
         internal Lookups.Key GetCurrentKey() {
             return Lookups.CycleKeys[_cycleCurrentKey];
         }
+       public  List<int> GenerateTriad(Lookups.Key key) {
+            var scale = Lookups.Scales[_setdef.Scale];
+            var ret = new List<int> { scale[0], scale[2], scale[4] };
+            return GenerateChord(_setdef.Key, ret);
+        }
+        List<int> GenerateChord(Lookups.Key key, IList<int> rels) {
+            // adjust for instrument transpose
+            var offset = Lookups.KeyTable[key].Base - _musicEngine.GetCurrentInstrument().NoteOffset;
+            // shunt into middle of the piano
+            offset += (int)Lookups.ImportantNotes.A3 - (int)Lookups.ImportantNotes.A0;
 
+            var ret = rels.Select(note=>note+offset).ToList();
+            return ret;
+        }
         int RelToAbs(int relNote, Lookups.Key key) {
             // convert a scale relative note to an actual note in range
             // and in the correct key
+            // and transposed
 
-            var offset = Lookups.KeyTable[key].Base;
+            var offset = Lookups.KeyTable[key].Base - _musicEngine.GetCurrentInstrument().NoteOffset;
             var r = offset + relNote;
             var candidates = new List<int>();
 

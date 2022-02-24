@@ -1,13 +1,20 @@
 ﻿namespace EarWorm.Code {
 
     public static class Lookups {
+
+        public enum ImportantNotes {
+            A0 = 21,
+            A3 = 57, // to calculate shunt to 'middle of piano'
+            C4 = 60, // middle c
+            C5 = 72 // top end of default range
+        }
         public enum RootMode {
-            //    PlayRoot,  // play root note before the test is played
             IncludeRoot, // include random root in test
-            IncludeRootHigh, // include highest root in range
-            IncludeRootLow, // include lowest root in range
             PlayTriad,// play triad
             Silent // nothing
+            //IncludeRootHigh, // include highest root in range
+            //IncludeRootLow, // include lowest root in range
+
         }
         public enum ToneGenerator {
             Beep,

@@ -45,7 +45,12 @@ namespace EarWorm.Pages {
                
                 var tries = 0;
                 for (tries =0; tries < test.Numtries; tries++) {
-                    _musicEngine.PlayNotes(test.Notes);
+                    if (_musicEngine.CurrentSet.RootMode == Lookups.RootMode.PlayTriad) {
+                        _musicEngine.PlayTestTriad(test);
+                        await Task.Delay(2000);
+                    }
+                    
+                    await _musicEngine.PlayNotes(test.Notes);
                     test.UsedTries = tries + 1;
                     await Task.Delay(test.Notes.Count * 1000);
                   //  _listening = true;
@@ -80,7 +85,10 @@ namespace EarWorm.Pages {
             }
             // _midTest = false;
             _musicEngine.EndSet();
-         }
+         
+            _running = false;
+            StateHasChanged();
+        }
 
         private TestSetResult CurrentResults {
             get {

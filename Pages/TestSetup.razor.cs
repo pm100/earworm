@@ -1,4 +1,5 @@
 ﻿using EarWorm.Code;
+using System.Collections;
 
 namespace EarWorm.Pages {
     public partial class TestSetup {
@@ -50,11 +51,11 @@ namespace EarWorm.Pages {
 
         public static IList<string> RootModes {
             get {
-              
+               
                 var t = new string[] {
-                    "Include Random Root",
-                    "Include High Root",
-                    "Include Low Root",
+                    "Include  Root",
+                 // "Include High Root",
+                  //  "Include Low Root",
                     "Play Triad",
                     "None"
 

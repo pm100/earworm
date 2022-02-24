@@ -21,7 +21,7 @@ namespace EarWorm.Code {
             _saver = saver;
             _settings = _saver.Settings;
             _testIdx = 0;
-            _generator = new SetGenerator();
+            _generator = new SetGenerator(this);
             Init(_saver.CurrentSet);
         }
         public State Init(SetDef def) {
@@ -41,6 +41,7 @@ namespace EarWorm.Code {
         }
         public void Clear() {
             _testIdx = 0;
+            _generator.Init(_currentSet);
             _saver.CurrentResults.Results.Clear(); 
         }
         public string GetNoteName(int note, bool transpose, Lookups.Key key) {
@@ -53,6 +54,12 @@ namespace EarWorm.Code {
             if (transpose) note += GetCurrentInstrument().NoteOffset;
             return NoteNameCalc( Lookups.NoteNames, note);  
         }
+
+        internal async void PlayTestTriad(TestDefinition test) {
+           var notes= _generator.GenerateTriad(test.Key);
+           await   PlayChord(notes);   
+        }
+
         private string NoteNameCalc(string[]noteStrings, int noteNum) {
             var noteStr = noteStrings[noteNum % 12];
             var octave = Math.Floor((float)noteNum / 12) - 1;
@@ -98,7 +105,7 @@ namespace EarWorm.Code {
             foreach (var td in _generator.GetNextTest()) {
                 _currentTest = td;
                 _testIdx++;
-
+                
                 yield return _currentTest;
 
             }
@@ -113,6 +120,7 @@ namespace EarWorm.Code {
 
         internal void EndSet() {
             _saver.WriteResult();
+          
         }
 
         public TestSetResult CurrentSetResults {
@@ -129,15 +137,26 @@ namespace EarWorm.Code {
             }
             return Lookups.Key.C; // !
         }
-        public async void PlayNotes(IList<int> notes) {
+        public async Task PlayNotes(IList<int> notes) {
             // we want 'real' note names
             var nlist = notes.Select(note => GetAbsNoteName(note, false));
             string func = "";
             if (_saver.Settings.ToneGenerator == Lookups.ToneGenerator.Beep)
                 func = "window.playToneSeq";
             else
-                func = "window.playSeq";
+                func = "window.playPianoSeq";
             await Util.JS.InvokeVoidAsync(func, nlist.ToList(), 1);
+        }
+        public async Task PlayChord(IList<int> notes) {
+            // we want 'real' note names
+            var nlist = notes.Select(note => GetAbsNoteName(note, false));
+            string func = "";
+            if (_saver.Settings.ToneGenerator == Lookups.ToneGenerator.Beep)
+                func = "window.playToneChord";
+            else
+                func = "window.playPianoChord";
+            await Util.JS.InvokeVoidAsync(func, nlist.ToList(), 1);
+
         }
     }
 }

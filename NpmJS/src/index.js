@@ -49,7 +49,7 @@ window.playToneSeq = (notes, interval) => {
 
 // beep a chord
 
-window.playChord = (notes, length) => {
+window.playToneChord = (notes, length) => {
     Tone.start();
     const synth = new Tone.PolySynth(Tone.Synth).toDestination();
     const now = Tone.now();
@@ -61,15 +61,15 @@ window.playChord = (notes, length) => {
 };
 
 // play seq with piano
-window.playSeq = async (notes, interval) => {
+window.playPianoSeq = async (notes, interval) => {
     
     if (!window.toneSampler) {
         window.toneSampler = new Tone.Sampler({
             urls: {
-                "C4": "assets/C4v10.mp3",
-                "D#4": "assets/Ds4v10.mp3",
-                "F#4": "assets/Fs4v10.mp3",
-                "A4": "assets/A4v10.mp3",
+                "C4": "assets/C4.mp3",
+                "D#4": "assets/Ds4.mp3",
+                "F#4": "assets/Fs4.mp3",
+                "A4": "assets/A4.mp3",
             },
             release: 1
 
@@ -80,11 +80,31 @@ window.playSeq = async (notes, interval) => {
     console.log(now);
     var offset = 0;
     notes.forEach(note => {
-        window.toneSampler.triggerAttackRelease(note, 0.85, now + offset, 0.5);
+        window.toneSampler.triggerAttackRelease(note, 0.85, now + offset, 0.75);
         offset = offset + interval;
     });
 }
+// play chord with piano
+window.playPianoChord = async (notes, interval) => {
 
+    if (!window.toneSampler) {
+        window.toneSampler = new Tone.Sampler({
+            urls: {
+                "C4": "assets/C4.mp3",
+                "D#4": "assets/Ds4.mp3",
+                "F#4": "assets/Fs4.mp3",
+                "A4": "assets/A4.mp3",
+            },
+            release: 1
+
+        }).toDestination();
+        await Tone.loaded()
+    }
+    const now = Tone.now();
+    notes.forEach(note => {
+        window.toneSampler.triggerAttackRelease(note, 1.5, now, 0.5);
+   });
+}
 window.drawStaff = (divName, staffDef) => {
     const VF = Vex.Flow;
     // Create an SVG renderer and attach it to the DIV element named in divName.

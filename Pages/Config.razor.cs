@@ -1,6 +1,6 @@
 ﻿using EarWorm.Code;
 using EarWorm.Shared;
-
+using System.Collections;
 namespace EarWorm.Pages
 {
     public partial class Config
@@ -12,6 +12,8 @@ namespace EarWorm.Pages
         Listener _listener;
         public Config() {
             Util.Log("const config");
+
+
             _instrumentTable = Lookups.Instruments;
             _instrumentKeys = _instrumentTable.Keys.ToList();
             _instrumentNames = _instrumentTable.Values.Select(ins => ins.Name).ToList();
@@ -60,10 +62,10 @@ namespace EarWorm.Pages
                 return new List<string> { "Beep", "Piano" };
             }
         }
-        void TonerChanged(int sel) {
+        async void  TonerChanged(int sel) {
             _saver.Settings.ToneGenerator = (Lookups.ToneGenerator)sel;
 
-            _musicEngine.PlayNotes(new List<int> { 60, 64, 67 });
+            await _musicEngine.PlayNotes(new List<int> { 60, 64, 67 });
         }
         public int SelectedToner => (int)_saver.Settings.ToneGenerator;
         public void Dispose() {
