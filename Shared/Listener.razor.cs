@@ -37,6 +37,8 @@ namespace EarWorm.Shared {
         Staff _staffDef;
         DateTime _startTime;
         TestDefinition _testDef;
+        int _rangeHigh;
+        int _rangeLow;
 
         void StartTimer(int max) {
             Max = Time = max * 10;
@@ -58,9 +60,11 @@ namespace EarWorm.Shared {
             Util.Log("construct listener");
             s_listenerInstance = this;
         }
-        public async Task<TestResult> Show(Mode mode, TestDefinition testDef) {
+        public async Task<TestResult> Show(Mode mode, TestDefinition testDef, int rangeHigh, int rangeLow) {
             _tcs = new TaskCompletionSource<TestResult>();
             _testDef = testDef;
+            _rangeHigh = rangeHigh; 
+            _rangeLow = rangeLow;
             Init(mode);
             await _modal.ShowAsync();
             StartJSListener(5, 15, 0.2, 0.01);
@@ -95,6 +99,12 @@ namespace EarWorm.Shared {
             // to deal with any last note notification left over
             if (!_listening)
                 return;
+
+            if (n > _rangeHigh || n < _rangeLow) {
+                Util.Log($"note = {n}, out of range");
+
+                return;
+            }
             var result = Lookups.ListenResult.Init;
             // convert midi note number to string n => C#4
 

@@ -55,7 +55,9 @@ namespace EarWorm.Pages
             var fakeTest = new TestDefinition {
                 Key = _saver.CurrentSet.Key
             };
-            await _listener.Show(Listener.Mode.Train, fakeTest);
+            await _listener.Show(Listener.Mode.Train, fakeTest,
+                (int)Lookups.ImportantNotes.RangeHigh,
+                (int)Lookups.ImportantNotes.RangeLow);
         }
         List<string> Toners {
             get {

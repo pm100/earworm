@@ -6,8 +6,7 @@ import Vex from 'vexflow';
 
 window.Vex = Vex;
 
-
-// no sleep funuctions
+// no-sleep functions
 
 window.noSleep = () => {
     window.sleeper = new NoSleep();
@@ -20,15 +19,7 @@ window.allowSleep = () => {
     sleeper.disable();
     console.log("nosleep off");
 }
-        window.convertArray = () => {
-        Tone.start();
-    //create a synth and connect it to the main output (your speakers)
-    const synth = new Tone.Synth().toDestination();
 
-    //play a middle 'C' for the duration of an 8th note
-    synth.triggerAttackRelease("C4", "8n");
-
-        };
 
 // tone.js functions
 
@@ -60,9 +51,8 @@ window.playToneChord = (notes, length) => {
     synth.triggerRelease(notes, now + length);
 };
 
-// play seq with piano
-window.playPianoSeq = async (notes, interval) => {
-    
+
+window.initSampler =async ()=> {
     if (!window.toneSampler) {
         window.toneSampler = new Tone.Sampler({
             urls: {
@@ -74,8 +64,13 @@ window.playPianoSeq = async (notes, interval) => {
             release: 1
 
         }).toDestination();
-        await Tone.loaded()
+        await Tone.loaded();
     }
+}
+// play seq with piano
+window.playPianoSeq = async (notes, interval) => {
+    
+    await window.initSampler();
     const now = Tone.now();
     console.log(now);
     var offset = 0;
@@ -86,20 +81,7 @@ window.playPianoSeq = async (notes, interval) => {
 }
 // play chord with piano
 window.playPianoChord = async (notes, interval) => {
-
-    if (!window.toneSampler) {
-        window.toneSampler = new Tone.Sampler({
-            urls: {
-                "C4": "assets/C4.mp3",
-                "D#4": "assets/Ds4.mp3",
-                "F#4": "assets/Fs4.mp3",
-                "A4": "assets/A4.mp3",
-            },
-            release: 1
-
-        }).toDestination();
-        await Tone.loaded()
-    }
+    await window.initSampler();
     const now = Tone.now();
     notes.forEach(note => {
         window.toneSampler.triggerAttackRelease(note, 1.5, now, 0.5);

@@ -1,12 +1,18 @@
 ﻿namespace EarWorm.Code {
 
     public static class Lookups {
+        // my midi crib sheet https://newt.phys.unsw.edu.au/jw/notes.html
 
         public enum ImportantNotes {
             A0 = 21,
             A3 = 57, // to calculate shunt to 'middle of piano'
             C4 = 60, // middle c
-            C5 = 72 // top end of default range
+            C5 = 72, // top end of default range
+            // Test Audio range
+            C2 = 36, 
+            RangeLow = C2,
+            C6 = 84,
+            RangeHigh = C6
         }
         public enum RootMode {
             IncludeRoot, // include random root in test
