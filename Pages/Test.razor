@@ -4,11 +4,34 @@
 @inject SavedData _saver;
 <Listener @ref=_listener />
 <p>@SetDescription</p>
-<HxButton Text="@StartButtonText" OnClick="StartClick" Color="ThemeColor.Primary" Enabled="ShowButtons" />
-@if (@ShowResume) {
-    <HxButton Text="Resume" OnClick="ResumeClick" Color="ThemeColor.Primary" Enabled="ShowButtons" />
-}
 
+<div class="container">
+    <div class="row px-3">
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            <HxButton Text="@StartButtonText" OnClick="StartClick" Color="ThemeColor.Primary" Enabled="ShowButtons" />
+        </div>
+        @if (@ShowResume) {
+            <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+
+                <HxButton Text="Continue" OnClick="ResumeClick" Color="ThemeColor.Primary" Enabled="ShowButtons" />
+            </div>
+        }
+    </div>
+    @if (@ShowRoll) {
+        <div class="row px-3">
+            <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+            @*<HxInputCheckbox ValueExpression="@(()=>RollNext)" Label="Automatically start next test" ValueChanged = "RollChanged"/>*@
+               <HxInputCheckbox @bind-Value="RollNext" Label="Automatically start next test" />
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
+
+            <HxProgress>
+                <HxProgressBar Label="" MaxValue=@MaxTime Value=@Time />
+            </HxProgress>
+        </div>
+    </div>
+    }
+</div>
 <table class="table table-sm">
     <thead>
         <tr>

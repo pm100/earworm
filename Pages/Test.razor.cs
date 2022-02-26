@@ -4,9 +4,14 @@ using Microsoft.JSInterop;
 namespace EarWorm.Pages {
     public partial class Test {
 
-       // bool _midTest = false;
+        bool _rollNext = true;
         bool _running = false;
-      //  bool _listening = false;
+        bool _first = true;
+        bool _showRoll;
+    
+        int Time { get; set; }
+        int MaxTime { get; set; }
+        Timer _timer;
         MusicEngine.State _initState;
         Listener _listener;
         bool ShowButtons => _running == false;
@@ -20,9 +25,24 @@ namespace EarWorm.Pages {
                 return _initState == MusicEngine.State.InSet ? "Restart" : "Start";
             }
         }
+        private bool ShowRoll => _showRoll;
+        bool RollNext {
+            get {
+                return _rollNext;
+            }
+            set {
+                _rollNext = value;
+                if (!_rollNext) {
+                    StopTimer();
+                }
+                else {
+                    StartTimer(Time);
+                }
+            }
+        }
         private async void StartClick() {
-
-            
+            StopTimer();
+            _first = false;
             _musicEngine.Clear();
             _running = !_running;
             if (_running)
@@ -35,10 +55,9 @@ namespace EarWorm.Pages {
                 await StartTestSet();
         }
         private async Task StartTestSet() {
-         //   _midTest = true;
+            _showRoll = false;
             if (_saver.Settings.NoSleep)
                 Util.NoSleep(true);
-           // var testNum = 1;
             foreach (var test in _musicEngine.GetNextTest()) {
                 if (!_running) break;
                 TestResult result = null;
@@ -53,12 +72,10 @@ namespace EarWorm.Pages {
                     await _musicEngine.PlayNotes(test.Notes);
                     test.UsedTries = tries + 1;
                     await Task.Delay(test.Notes.Count * 1000);
-                  //  _listening = true;
                     result = await _listener.Show(Listener.Mode.Test, test,
                         _musicEngine.CurrentSet.RangeEnd + 6,
                         _musicEngine.CurrentSet.RangeEnd - 6);
                     result.TestDef = test;
-                 //   _listening = false;
                     StateHasChanged();
                     if (result.LR == Lookups.ListenResult.Stop) {
                         _running = false;
@@ -70,7 +87,6 @@ namespace EarWorm.Pages {
                     if (result.LR == Lookups.ListenResult.Matched
                         || result.LR == Lookups.ListenResult.Abandoned) { 
                         result.Tries = tries+1;
-                      //  result.Number = testNum;
                         break;
                     }
                     // otherwise try again (result = failed)
@@ -82,16 +98,35 @@ namespace EarWorm.Pages {
                     result = new TestResult { LR = Lookups.ListenResult.Failed, Tries = tries+1, TestDef=test };
                 }
                 _musicEngine.ReportTestResult(result);
-                //testNum++; 
+        
                 StateHasChanged();
             }
-            // _midTest = false;
             _musicEngine.EndSet();
-         
             _running = false;
+            _showRoll = true;
+            StartTimer(5000);
             StateHasChanged();
         }
-
+        void StopTimer() {
+            if (_timer != null) {
+                _timer.Dispose();
+                _timer = null;
+            }
+        }
+ 
+        void StartTimer(int max) {
+            const int TIME_SLICE = 100;
+            MaxTime = Time = max;
+            _timer = new Timer(async _ => {
+                Time -= TIME_SLICE;
+                Util.Log($"time = {Time}");
+                if (Time == 0) {
+                    // timeout
+                    await InvokeAsync(StartClick);
+                }
+                await InvokeAsync(StateHasChanged);
+            }, null, 0, TIME_SLICE);
+        }
         private TestSetResult CurrentResults {
             get {
                 return _musicEngine.CurrentSetResults;

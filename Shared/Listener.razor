@@ -20,9 +20,9 @@
 
     </BodyTemplate>
     <FooterTemplate>
-        <HxButton Text="Stop" OnClick="HandleStop" Color="ThemeColor.Primary" />
+        <HxButton Text="Stop" OnClick="HandleStop" Color="ThemeColor.Warning" />
         @if (_mode == Mode.Test) {
-            <HxButton Text="Skip" OnClick="HandleSkip" Color="ThemeColor.Primary" />
+            <HxButton Text="Skip" OnClick="HandleSkip" Color="ThemeColor.Warning" />
         }
     </FooterTemplate>
 </HxModal>
