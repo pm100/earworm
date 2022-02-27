@@ -73,7 +73,7 @@ namespace EarWorm.Pages {
 
                 var t = new string[] {
                     "Random from one scale",
-                    "Melody samples",
+                  //  "Melody samples",
                     "Random notes moving thru cycle",
                 };
                 return t;

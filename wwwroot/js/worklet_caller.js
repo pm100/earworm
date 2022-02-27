@@ -7,8 +7,8 @@ class PitchDetectWorklet {
                 const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
                 this.audioContext = new AudioContextConstructor();
                 await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
-                var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                var mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+                this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                var mediaStreamSource = this.audioContext.createMediaStreamSource(this.stream);
                 this.pitchWorklet = new AudioWorkletNode(this.audioContext, 'pitch-processor');
                 this.setParam('buffersize', 10);
                 this.setParam('lockcount', 3);
@@ -25,7 +25,10 @@ class PitchDetectWorklet {
             }
         };
         this.stop = () => {
+            console.log("stop");
             if (this.running) {
+                console.log("stop2");
+                this.stream.getTracks().forEach((track) => track.stop());
                 this.audioContext.close();
                 this.running = false;
             }

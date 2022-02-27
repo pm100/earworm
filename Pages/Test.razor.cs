@@ -36,7 +36,7 @@ namespace EarWorm.Pages {
                     StopTimer();
                 }
                 else {
-                    StartTimer(Time);
+                    StartTimer(Time, true);
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace EarWorm.Pages {
             _musicEngine.EndSet();
             _running = false;
             _showRoll = true;
-            StartTimer(5000);
+            StartTimer(5000, false);
             StateHasChanged();
         }
         void StopTimer() {
@@ -114,12 +114,13 @@ namespace EarWorm.Pages {
             }
         }
  
-        void StartTimer(int max) {
+        void StartTimer(int max, bool resume) {
             const int TIME_SLICE = 100;
-            MaxTime = Time = max;
+            if (!resume)
+                MaxTime = Time = max;
             _timer = new Timer(async _ => {
                 Time -= TIME_SLICE;
-                Util.Log($"time = {Time}");
+                //Util.Log($"time = {Time} max = {MaxTime}");
                 if (Time == 0) {
                     // timeout
                     await InvokeAsync(StartClick);

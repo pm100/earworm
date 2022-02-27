@@ -13,6 +13,7 @@ class PitchDetectWorklet {
     pitchWorklet!: AudioWorkletNode;
     cb: (note: number) => void;
     options: PitchDetectOptions;
+    stream!: MediaStream;
 
     constructor(options: PitchDetectOptions, cb: (note: number) => void) {
         this.cb = cb;
@@ -34,9 +35,9 @@ class PitchDetectWorklet {
             this.audioContext = new AudioContextConstructor();
 
             await this.audioContext.audioWorklet.addModule('js/worklet_pitcher.js');
-            var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-            var mediaStreamSource = this.audioContext.createMediaStreamSource(stream);
+            var mediaStreamSource = this.audioContext.createMediaStreamSource(this.stream);
             this.pitchWorklet = new AudioWorkletNode(this.audioContext, 'pitch-processor');
 
             this.setParam('buffersize', 10);
@@ -55,7 +56,10 @@ class PitchDetectWorklet {
         }
     }
     stop = (): void => {
+        console.log("stop");
         if (this.running) {
+            console.log("stop2");
+            this.stream.getTracks().forEach((track) => track.stop());
             this.audioContext.close();
             this.running = false;
         }
