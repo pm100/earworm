@@ -14,16 +14,20 @@
         @if (_resultIcon != null) {
             <HxIcon Icon="@_resultIcon" CssClass="display-3" />
         }
-        <HxProgress>
-            <HxProgressBar Label="" MaxValue=@Max Value=@Time />
+        @if (_mode == Mode.Test) {
+            <HxProgress>
+                <HxProgressBar Label="" MaxValue=@Max Value=@Time />
         </HxProgress>
-
+        }
     </BodyTemplate>
     <FooterTemplate>
-        <HxButton Text="Pause" OnClick="HandleStop" Color="ThemeColor.Warning" />
         @if (_mode == Mode.Test) {
+            <HxButton Text="Pause" OnClick="HandleStop" Color="ThemeColor.Warning" />
             <HxButton Text="Skip" OnClick="HandleSkip" Color="ThemeColor.Warning" />
+        }else {
+            <HxButton Text="Done" OnClick="HandleStop" Color="ThemeColor.Primary" />
         }
+
     </FooterTemplate>
 </HxModal>
 

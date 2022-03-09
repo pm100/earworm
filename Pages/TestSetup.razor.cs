@@ -1,16 +1,43 @@
 ﻿using EarWorm.Code;
 using System.Collections;
-
+using Havit.Blazor.Components.Web;
+using Microsoft.AspNetCore.Components;
 namespace EarWorm.Pages {
     public partial class TestSetup {
+
+        [Inject] protected IHxMessageBoxService MessageBox { get; set; }
         protected override void OnInitialized() {
 
             _currentSet = _saver.CurrentSet;
         }
-        private int SetSize { get { return _currentSet.TestCount; } set { _currentSet.TestCount = value; } }
+        private int SetSize {
+            get { return _currentSet.TestCount; }
+            set {
+                if (value < 1) {
+                    var showResult = MessageBox.ShowAsync("Info", "Must be more than 0", MessageBoxButtons.Ok);
+                }
+                else
+                    _currentSet.TestCount = value;
+            }
+        }
         private int Retries { get { return _currentSet.Retries; } set { _currentSet.Retries = value; } }
-        private int TimeAllowed { get { return _currentSet.TimeAllowed; } set { _currentSet.TimeAllowed = value; } }
-        private int NotesInTest { get { return _currentSet.NoteCount; } set { _currentSet.NoteCount = value; } }
+        private int TimeAllowed {
+            get { return _currentSet.TimeAllowed; }
+            set {
+                if (value < 1) {
+                    var showResult = MessageBox.ShowAsync("Info", "Must be more than 1", MessageBoxButtons.Ok);
+                }
+                else {
+                    _currentSet.TimeAllowed = value;
+                }
+            }
+        }
+        private int NotesInTest { get { return _currentSet.NoteCount; } set {
+                if (value < 1 || value > 6) {
+                    var showResult = MessageBox.ShowAsync("Info", "Must be more than 1 and less than 6", MessageBoxButtons.Ok);
+                }
+                else
+                _currentSet.NoteCount = value; } }
         private List<string> ScaleItems {
 
             get {
@@ -51,7 +78,7 @@ namespace EarWorm.Pages {
 
         public static IList<string> RootModes {
             get {
-               
+
                 var t = new string[] {
                     "Include  Root",
                  // "Include High Root",

@@ -10,8 +10,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHxServices();
 builder.Services.AddSingleton<SavedData>();
 builder.Services.AddSingleton<MusicEngine>();
-//builder.Services.AddSingleton<SetGenerator>();
-//builder.Services.AddSingleton<Application>();
+builder.Services.AddHxMessageBoxHost();
 
 
 await builder.Build().RunAsync();

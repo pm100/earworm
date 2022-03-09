@@ -54,6 +54,7 @@ class PitchProcessor extends AudioWorkletProcessor {
         // -1 means silence
         if (frequency > 0) {
             var note = this.noteFromPitch(frequency);
+            //console.log(note);
             if (!that.lock && that.currentNote != note) {
                 if (note == that.candidate) {
                     that.same++;

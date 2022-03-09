@@ -22,7 +22,13 @@
 	pitchStop = () => {
 		console.log("stop pitch detect");
 		globalThis.detector.stop();
-    }
+}
+
+window.MyCacheClear = async () => {
+    const cacheKeys = await caches.keys();
+    await Promise.all(cacheKeys.map(key => caches.delete(key)));
+
+}
 //window.drawStaff = (divName, staffDef) => {
 //    const VF = Vex.Flow;
 //    // Create an SVG renderer and attach it to the DIV element named in divName.

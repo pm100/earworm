@@ -1,6 +1,7 @@
 ﻿using EarWorm.Code;
 using EarWorm.Shared;
 using System.Collections;
+using Microsoft.JSInterop;
 namespace EarWorm.Pages
 {
     public partial class Config
@@ -70,6 +71,9 @@ namespace EarWorm.Pages
             await _musicEngine.PlayNotes(new List<int> { 60, 64, 67 });
         }
         public int SelectedToner => (int)_saver.Settings.ToneGenerator;
+        void CacheClear() {
+            Util.JS.InvokeVoidAsync("window.MyCacheClear");
+        }
         public void Dispose() {
             Util.Log("displose config");
             _saver.SaveSettings();

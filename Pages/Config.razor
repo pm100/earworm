@@ -7,12 +7,14 @@
 @inject SavedData _saver
 @inject MusicEngine _musicEngine
 
-<PageTitle>Configure</PageTitle>
+<PageTitle >Configure</PageTitle>
+
 
 <div class="container">
     <div class="row px-3">
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-            <DropDown Items=@Items ButtonText="Select Instrument" Selected=@Selected
+
+            <DropDown Items=@Items Label="Select Instrument" Selected=@Selected
                       OnSelectionChange=@InstrumentChanged />
         </div>
         <div class="col-md-6 col-lg-4 col-xl-3 p-3">
@@ -22,10 +24,6 @@
     </div>
 
     <div class="row px-3">
-        <div class="col-md-6 col-lg-4 col-xl-3 p-3">
-
-            <HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
-            </div>
             <div class="row px-3">
                 <HxInputCheckbox @bind-Value="KeySig" Label="Show real key signature" />
 
@@ -38,7 +36,16 @@
                 <DropDown Label="Tone Generator" Items=@Toners Selected=@SelectedToner OnSelectionChange=@TonerChanged />
             </div>
         </div>
-
+  
         <Listener @ref=_listener />
-
     </div>
+    <HxAccordion>
+        <HxAccordionItem >
+            <HeaderTemplate>Advanced</HeaderTemplate>
+            <BodyTemplate>
+                    <HxButton Text="Clear Cache" OnClick="CacheClear" Color="ThemeColor.Dark" />
+            <HxInputCheckbox @bind-Value="SleepChecked" Label="Prevent Device Sleeping While Playing" />
+
+            </BodyTemplate>
+        </HxAccordionItem>
+    </HxAccordion>
