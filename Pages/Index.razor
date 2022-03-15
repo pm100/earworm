@@ -5,39 +5,47 @@
 @inject SavedData _saver;
 <PageTitle>Welcome</PageTitle>
 
-<div>your progress</div>
-@if (@ShowResultTable) {
-    <table class="table table-sm">
-  <thead>
-    <tr>
-      <th scope="col">Date</th>
-      <th scope="col">Description</th>
-      <th scope="col">Tests</th>
-      <th scope="col">Score</th>
-    </tr>
-  </thead>
-  <tbody>
-      @for(int i = 0; i < ResultsDB.Results.Count; i++)
-      {
-            var it = ResultsDB.Results[i];
-            <tr>
-                <th scope="row">@(it.DateTime)</th>
-                <td>@it.SetDefinition.Description()</td>
-                <td>@it.Results.Count</td>
-                <td>@(_musicEngine.CalculateScore(it))</td>
-            </tr>
+<div>
 
-      }
+    <p class="h4">Getting Started</p>
+    <p>
+        First go to the 'Config' page/tab and choose your instrument.
+        Then press 'Test Audio'. This will popup a test window showing a musical staff. Play a few notes in the normal range of your instrument, check that the correct notes appear in the staff,
+        they will be transposed if your instrument is a transposing one (sax for example). Experiment until you can confidently get EarWorm to recognize what you are playing.
+        You might have to play louder, softer, 'punchier' etc.
+    </p>
 
+    <p>
+        Now go to the 'Run Test' page/tab.
+        The starting test setup will present you with a sequence of 3 notes in C, the first note will be C (see 'Basic Scale , C Major' at the top).
+        Press 'Start' , EarWorm will play you the notes and then popup the same screen with a staff. Play the notes you just heard back to EarWorm, it will display the notes it hears on the staff and in text.
+        If you are too slow or make a mistake it will repeat the same test (the default is 5 times, you can change that). If you get it right it will play the next test in the set. The default is 5 tests in a set.
 
-  </tbody>
-</table>
-}
-@code{
-    public bool ShowResultTable {
-        get{
-            return _saver.ResultsDB.Results.Count > 0;
-        }
-    }
-    public ResultsDB ResultsDB => _saver.ResultsDB;
-}
+    </p>
+    <p>
+        You can skip a test if for some reason you cant do it, you will get a score of 0 but it will stop repeating it to you. Press 'Skip'
+    </p>
+    <p>
+        You can pause in the middle of a test set by pressing 'Pause'. You can resume by pressing 'Continue' , pressing 'Restart' will start the whole set from the beginning, no score will be recorded for the tests so far.
+    </p>
+    <p>
+        Once a test set is complete you will see the score for that set (EarWorm will keep a historic record for you) and it will automaticlly start a new set with the same set up in a few seconds. If you dont want it to just switch to a different tab or uncheck the box.
+    </p>
+    <p>
+        Now you can use 'Setup Test' page/tab to change the test set definition. Choose:
+        <ul>
+            <li>The number of notes in a test</li>
+            <li>The number of tests in a set</li>
+            <li>How long you have for each test</li>
+            <li>How many times you get to retry the same test</li>
+            <li>The scale type and key</li>
+            <li>If you want the first note to be the root or for EarWorm to play a triad before each test</li>
+            <li>If you want one key or 12 in a cycle</li>
+
+        </ul>
+       
+        Note that if you choose to use the cycle of fifths instead of just one key the you will get 12 times as many tests (3 for C, 3 for G, 3 for D etc). The cycle will start with the chosen key and use the selected scale in each key
+    </p>
+
+</div>
+

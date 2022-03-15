@@ -149,8 +149,14 @@ namespace EarWorm.Shared {
                 }
             }
             else {
-                if(_noteIdx++>6) {
-                    Stop(Lookups.ListenResult.Stop);
+                if(_noteIdx>6) {
+                    Util.ShiftLeft(_staffDef.Notes, 1);
+                    _staffDef.Notes.RemoveAt(_noteIdx);
+
+                    //Stop(Lookups.ListenResult.Stop);
+                }
+                else {
+                    _noteIdx++;
                 }
             }
 

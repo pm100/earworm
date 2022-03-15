@@ -1,0 +1,43 @@
+﻿@page "/results"
+@implements IDisposable
+
+@using EarWorm.Shared
+@using EarWorm.Code;
+
+@inject SavedData _saver
+@inject MusicEngine _musicEngine
+
+<PageTitle >Results</PageTitle>
+
+<h3>Results</h3>
+
+
+
+
+    <table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Description</th>
+      <th scope="col">Tests</th>
+      <th scope="col">Score</th>
+    </tr>
+  </thead>
+  <tbody>
+      @for(int i = 0; i < ResultsDB.Results.Count; i++)
+      {
+            var it = ResultsDB.Results[i];
+            <tr>
+                <th scope="row">@(it.DateTime)</th>
+                <td>@it.SetDefinition.Description()</td>
+                <td>@it.Results.Count</td>
+                <td>@(_musicEngine.CalculateScore(it))</td>
+            </tr>
+
+      }
+
+
+  </tbody>
+</table>
+
+

@@ -71,7 +71,7 @@ namespace EarWorm.Pages {
                     
                     await _musicEngine.PlayNotes(test.Notes);
                     test.UsedTries = tries + 1;
-                    await Task.Delay(test.Notes.Count * 1000);
+                    await Task.Delay(test.Notes.Count * 1250);
                     result = await _listener.Show(Listener.Mode.Test, test,
                         _musicEngine.CurrentSet.RangeEnd + 6,
                         _musicEngine.CurrentSet.RangeEnd - 6);
