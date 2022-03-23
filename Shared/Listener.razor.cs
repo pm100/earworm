@@ -94,7 +94,7 @@ namespace EarWorm.Shared {
             _resultIcon = null;
         }
 
-        private async Task Note(int n) {
+        private async Task Note(int n, int freq) {
             Util.Log($"note = {n}, listen = {_listening}");
             // to deal with any last note notification left over
             if (!_listening)
@@ -161,7 +161,7 @@ namespace EarWorm.Shared {
             }
 
             await Util.JS.InvokeVoidAsync("window.drawStaff", "vf", _staffDef);
-            _notes += String.Format("{0} ", absNoteStr);
+            _notes += String.Format("{0}[{1}] ", absNoteStr, freq);
 
             StateHasChanged();
             if (result != Lookups.ListenResult.Init)
@@ -175,7 +175,7 @@ namespace EarWorm.Shared {
             // lockCount - how many samples have to return the same not before we lock onto it
             // silnse - rms threshold for decideing that a sample is silnt and thus should not be looked at
 
-            JS.InvokeVoidAsync("pitchStart", "earworm", "NoteHeard", buffer, silence, thresh, lockCount);
+            JS.InvokeVoidAsync("pitchStart", "earworm", "NoteHeard", buffer, silence, thresh, lockCount, 440);
             //_listening = true;
         }
         private void StopJSListener() {
@@ -185,8 +185,8 @@ namespace EarWorm.Shared {
 
         // JS listener call back when note heard
         [JSInvokable]
-        public static async void NoteHeard(int note) {
-            await s_listenerInstance.Note(note);
+        public static async void NoteHeard(int note, int freq) {
+            await s_listenerInstance.Note(note, freq);
         }
 
         private async void Stop(Lookups.ListenResult result) {
@@ -232,8 +232,8 @@ namespace EarWorm.Shared {
 
         }
         public void Dispose() {
-            if(_saver.Settings.NoSleep)
-                Util.NoSleep(false);
+            //if(_saver.Settings.NoSleep)
+            //    Util.NoSleep(false);
             Util.Log("dispose l");
             if (_timer != null) {
                 _timer.Dispose();

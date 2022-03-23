@@ -6,7 +6,7 @@ namespace EarWorm.Pages {
 
         bool _rollNext = true;
         bool _running = false;
-        bool _first = true;
+       // bool _first = true;
         bool _showRoll;
     
         int Time { get; set; }
@@ -42,7 +42,6 @@ namespace EarWorm.Pages {
         }
         private async void StartClick() {
             StopTimer();
-            _first = false;
             _musicEngine.Clear();
             _running = !_running;
             if (_running)
@@ -132,6 +131,10 @@ namespace EarWorm.Pages {
             get {
                 return _musicEngine.CurrentSetResults;
             }
+        }
+        public void Dispose() {
+            if (_saver.Settings.NoSleep)
+                Util.NoSleep(false);
         }
 
     }

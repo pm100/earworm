@@ -1,8 +1,8 @@
 ﻿	
-	 pitchStart = (asm, method, buff, sil, thr, lock) =>{
-		var cb = (note) => {
+	 pitchStart = (asm, method, buff, sil, thr, lock, afreq) =>{
+		var cb = (note, freq) => {
 			console.log(note);
-			DotNet.invokeMethod(asm, method, note);
+			DotNet.invokeMethod(asm, method, note, Math.round(freq));
 
          }
          try {
@@ -10,7 +10,8 @@
                  buffersize: buff,
                  silence: sil,
                  threshold: thr,
-                 lockcount:lock
+                 lockcount: lock,
+                 afreq:afreq
              };
              globalThis.detector = globalThis.detector || new PitchDetectWorklet(options,cb);
              globalThis.detector.start();

@@ -1,7 +1,8 @@
 ﻿@page "/test"
 @using EarWorm.Code;
 @inject MusicEngine _musicEngine
-@inject SavedData _saver;
+@inject SavedData _saver
+@implements IDisposable
 <Listener @ref=_listener />
 <p>@SetDescription</p>
 

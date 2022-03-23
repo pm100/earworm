@@ -1,4 +1,6 @@
-﻿interface AudioWorkletProcessor {
+﻿import { Param } from "../node_modules/tone/build/esm/classes";
+
+interface AudioWorkletProcessor {
     readonly port: MessagePort;
     process(
         inputs: Float32Array[][],
@@ -36,13 +38,17 @@ class PitchProcessor extends AudioWorkletProcessor {
     lock = false;
     once = true;
     count = 0;
+    anote = 440;
+    samprate = 48000;
 
     static get parameterDescriptors() {
         return [
             { name: 'buffersize', defaultValue: 20, minValue: 1, maxValue: 1000 },
             { name: 'lockcount', defaultValue: 3, minValue: 1, maxValue: 1000 },
             { name: 'silence', defaultValue: 0.01, minValue: 0.001, maxValue: 1 },
-            { name: 'threshold', defaultValue: 0.2, minValue: 0.001, maxValue: 1 }
+            { name: 'threshold', defaultValue: 0.2, minValue: 0.001, maxValue: 1 },
+            { name: 'afreq', defaultValue: 440, minValue: 1, maxValue: 10000 },
+            { name: 'samprate', defaultValue: 48000, minValue: 1, maxValue: 1000000 },
         ];
     }
 
@@ -66,6 +72,8 @@ class PitchProcessor extends AudioWorkletProcessor {
             this.silence = parameters.silence[0];
             this.lockCount = parameters.lockcount[0];
             this.threshold = parameters.threshold[0];
+            this.anote = parameters.afreq[0];
+            this.samprate = parameters.samprate[0];
             this.buffer = new Float32Array(this.bsize);
             console.log(this.bsize, this.lockCount, this.silence, this.threshold);
         }
@@ -78,7 +86,7 @@ class PitchProcessor extends AudioWorkletProcessor {
         if (this.count >= this.bsize) {
             // we have enough data
             this.count = 0;
-            var [fq, rms] = this.autoCorrelate(this.buffer, 48000);
+            var [fq, rms] = this.autoCorrelate(this.buffer, this.samprate);
             this.processNote(fq, rms);
         }
         return true;
@@ -102,7 +110,7 @@ class PitchProcessor extends AudioWorkletProcessor {
                         that.lock = true;
                         that.candidate = 0;
                         // we have a note, tell the caller
-                        this.port.postMessage(note);
+                        this.port.postMessage({ n: note, f: frequency });
                     }
                 }
                 else {
@@ -122,7 +130,7 @@ class PitchProcessor extends AudioWorkletProcessor {
     // converts frequency to midi note number
 
     private noteFromPitch(frequency: number): number {
-        var noteNum = 12 * (Math.log(frequency / 440) / Math.log(2));
+        var noteNum = 12 * (Math.log(frequency / this.anote) / Math.log(2));
         return Math.round(noteNum) + 69;
     }
 

@@ -31,6 +31,10 @@ namespace EarWorm.Code {
                     _settingsData = Defaults.DefaultSettings;
                     SaveSettings(); 
                 }
+
+            if (_settingsData.AFreq == 0)
+                _settingsData.AFreq = 440;
+
             Util.Log(_settingsData.ToString());
         }
         async Task LoadSetDefs() {

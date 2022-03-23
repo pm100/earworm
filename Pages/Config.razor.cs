@@ -56,14 +56,24 @@ namespace EarWorm.Pages
             var fakeTest = new TestDefinition {
                 Key = _saver.CurrentSet.Key
             };
+            if (_saver.Settings.NoSleep)
+                Util.NoSleep(true);
+            
             await _listener.Show(Listener.Mode.Train, fakeTest,
                 (int)Lookups.ImportantNotes.RangeHigh,
                 (int)Lookups.ImportantNotes.RangeLow);
+            
+            if (_saver.Settings.NoSleep)
+                Util.NoSleep(false);
         }
         List<string> Toners {
             get {
                 return new List<string> { "Beep", "Piano" };
             }
+        }
+        int AFreq {
+            get { return _saver.Settings.AFreq; }
+            set { _saver.Settings.AFreq = value; }
         }
         async void  TonerChanged(int sel) {
             _saver.Settings.ToneGenerator = (Lookups.ToneGenerator)sel;

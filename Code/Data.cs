@@ -259,7 +259,8 @@
                     NoSleep = true,
                     Version = 1,
                     KeySig = true,
-                    ToneGenerator = Lookups.ToneGenerator.Piano
+                    ToneGenerator = Lookups.ToneGenerator.Piano,
+                    AFreq = 440,
                 };
             }
         }
@@ -346,8 +347,8 @@
         public bool KeySig { get; set; }
         public int Version { get; set; }
         public Lookups.ToneGenerator ToneGenerator {get;set; }
-    };
-
+        public int AFreq { get; set; }
+    }
 
     public record class SetDefData {
         public SetDef Current { get; set; }
