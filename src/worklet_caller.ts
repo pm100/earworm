@@ -56,6 +56,7 @@ class PitchDetectWorklet {
                 this.cb(ev.data.n, ev.data.f);
             }
             mediaStreamSource.connect(this.pitchWorklet);
+            this.pitchWorklet.connect(this.audioContext.destination);
             this.running = true;
         }
         catch (e) {

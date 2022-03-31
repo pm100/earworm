@@ -25,6 +25,27 @@
 		globalThis.detector.stop();
 }
 
+
+pitchStartNew = (asm, method, buff, sil, thr, lock, afreq) => {
+    var cb = (note, freq) => {
+        console.log(note);
+        DotNet.invokeMethod(asm, method, note, 0);
+
+    }
+    try {
+
+        globalThis.detector = globalThis.detector || new PitchDetect( cb);
+        globalThis.detector.start();
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+pitchStopNew = () => {
+    console.log("stop pitch detect");
+    globalThis.detector.stop();
+}
+
 window.MyCacheClear = async () => {
     const cacheKeys = await caches.keys();
     await Promise.all(cacheKeys.map(key => caches.delete(key)));

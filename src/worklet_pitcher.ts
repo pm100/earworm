@@ -65,6 +65,8 @@ class PitchProcessor extends AudioWorkletProcessor {
         const output = outputs[0];
         const left = input[0];
         const right = input[1];
+        const lefto = output[0];
+        const righto = output[1];
         
         if (this.once) {
             this.once = false;
@@ -81,6 +83,7 @@ class PitchProcessor extends AudioWorkletProcessor {
         for (let i = 0; i < 128; i++) { 
             var o = 0.5 * (left[i] + right[i]);
             this.buffer[this.count++] = o;
+            lefto[i] = righto[i] = 0;
         }
 
         if (this.count >= this.bsize) {

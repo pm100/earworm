@@ -102,8 +102,8 @@ namespace EarWorm.Shared {
 
             if (n > _rangeHigh || n < _rangeLow) {
                 Util.Log($"note = {n}, out of range");
-
-                return;
+                // TODO
+               // return;
             }
             var result = Lookups.ListenResult.Init;
             // convert midi note number to string n => C#4
